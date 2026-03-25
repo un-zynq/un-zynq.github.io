@@ -1,46 +1,72 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+        :root {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-color: #333;
+            --accent: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; border-radius: 0 !important; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #333; }
+        ::-webkit-scrollbar-thumb:hover { background: #444; }
+
         body {
-            font-family: system-ui, sans-serif;
-            background-color: #000;
-            /* Cool minimal grid background */
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 24px;
+            transition: background 0.3s;
+        }
+
+        /* Background Patterns */
+        body.bg-grid {
             background-image: 
                 linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 40px 40px;
-            color: #fff;
-            min-height: 100vh;
-            padding: 20px;
         }
+        body.bg-dots {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
 
         /* Tabs */
         .tabs {
             display: flex;
-            gap: 4px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 12px;
+            gap: 0;
+            margin-bottom: 32px;
+            border-bottom: 2px solid var(--border-color);
         }
         .tab {
             background: none;
             border: none;
-            color: #555;
-            padding: 10px 20px;
+            color: #666;
+            padding: 12px 24px;
             font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: color 0.2s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
         }
-        .tab.active { color: #fff; border-bottom: 2px solid #fff; margin-bottom: -13px; }
-        .tab:hover { color: #ccc; }
+        .tab.active { color: var(--text-color); border-bottom-color: var(--accent); }
+        .tab:hover { color: #aaa; }
 
         /* Views */
         .view { display: none; }
@@ -49,89 +75,123 @@
         /* Search */
         .search {
             width: 100%;
-            padding: 12px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid #333;
-            color: #fff;
-            margin-bottom: 20px;
+            padding: 14px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            margin-bottom: 24px;
             font-size: 14px;
             outline: none;
         }
-        .search:focus { border-color: #fff; }
+        .search:focus { border-color: var(--accent); }
 
         /* Grid */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1px; /* Minimalist grid lines */
+            background-color: var(--border-color);
+            border: 1px solid var(--border-color);
         }
+        .grid > * { background-color: var(--bg-color); }
 
         /* Card */
         .card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid #222;
-            padding: 24px 12px;
+            padding: 32px 16px;
             text-align: center;
             cursor: pointer;
-            font-size: 13px;
-            color: #fff;
-            transition: all 0.2s;
+            font-size: 14px;
+            color: var(--text-color);
+            transition: background 0.2s;
+            position: relative;
+            border: none; /* Part of grid layout */
         }
-        .card:hover { 
-            background: rgba(255,255,255,0.08); 
-            border-color: #444; 
+        .card:hover { background: rgba(255,255,255,0.08); }
+        .card small { opacity: 0.5; font-size: 11px; display: block; margin-top: 8px; }
+
+        /* Tool Card Actions */
+        .card .delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #000;
+            border: 1px solid #333;
+            color: #ff5555;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        .card:hover .delete-btn { opacity: 1; }
+        .card .delete-btn:hover { background: #ff5555; color: #000; border-color: #ff5555; }
 
         /* Settings */
-        .setting {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid #222;
+        .setting-group {
+            border: 1px solid var(--border-color);
             padding: 20px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            background: rgba(0,0,0,0.2);
         }
-        .setting h4 { font-size: 14px; margin-bottom: 4px; color: #fff; }
-        .setting p { font-size: 12px; color: #666; margin-bottom: 12px; }
+        .setting-group h4 { font-size: 14px; margin-bottom: 4px; color: var(--text-color); text-transform: uppercase; letter-spacing: 0.5px; }
+        .setting-group p { font-size: 12px; color: #666; margin-bottom: 16px; }
 
-        input[type="text"], select {
+        input[type="text"], input[type="url"], select, input[type="color"] {
             width: 100%;
             padding: 10px;
             background: #000;
-            border: 1px solid #333;
+            border: 1px solid var(--border-color);
             color: #fff;
-            font-size: 13px;
+            font-size: 14px;
             outline: none;
         }
-        input[type="text"]:focus, select:focus { border-color: #fff; }
-
-        .row { display: flex; gap: 10px; }
-        .row input { flex: 1; }
+        input[type="color"] { height: 42px; padding: 2px; cursor: pointer; }
+        
+        .row { display: flex; gap: 12px; }
+        .row > * { flex: 1; }
 
         /* Toggle */
         .toggle-wrap { display: flex; justify-content: space-between; align-items: center; }
-        .toggle { width: 44px; height: 24px; background: #222; position: relative; cursor: pointer; }
-        .toggle.on { background: #fff; }
+        .toggle { 
+            width: 48px; 
+            height: 24px; 
+            background: #222; 
+            position: relative; 
+            cursor: pointer; 
+            border: 1px solid #333;
+        }
+        .toggle.on { background: var(--accent); border-color: var(--accent); }
         .toggle::after {
             content: "";
             position: absolute;
             width: 18px;
             height: 18px;
-            background: #fff;
-            top: 3px;
-            left: 3px;
+            background: #888;
+            top: 2px;
+            left: 2px;
+            transition: left 0.2s;
         }
-        .toggle.on::after { left: 23px; background: #000; }
+        .toggle.on::after { left: 26px; background: #000; }
 
-        /* Button */
+        /* Buttons */
         .btn {
-            background: #fff;
+            background: var(--accent);
             color: #000;
             border: none;
             padding: 10px 20px;
             font-size: 13px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        .btn:hover { opacity: 0.9; }
         .btn-ghost { background: transparent; border: 1px solid #333; color: #fff; }
+        .btn-danger { background: transparent; border: 1px solid #ff3333; color: #ff3333; }
 
         /* Modal */
         #modal {
@@ -146,12 +206,12 @@
         }
         .modal-box {
             background: #050505;
-            border: 1px solid #222;
-            padding: 30px;
+            border: 1px solid #333;
+            padding: 24px;
             width: 100%;
             max-width: 400px;
         }
-        .modal-box h3 { margin-bottom: 20px; font-size: 18px; color: #fff; }
+        .modal-box h3 { margin-bottom: 20px; font-size: 16px; text-transform: uppercase; }
         .modal-box input, .modal-box textarea {
             width: 100%;
             margin-bottom: 12px;
@@ -161,82 +221,169 @@
             color: #fff;
             font-size: 13px;
         }
-        .modal-box textarea { height: 80px; resize: none; font-family: monospace; }
+        .modal-box textarea { height: 100px; resize: none; font-family: monospace; }
         .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+        /* Game Overlay */
+        #game-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 200;
+            display: none;
+        }
+        #game-overlay.active { display: block; }
+        
+        /* Floating X Close Button */
+        .close-overlay-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 201;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            font-size: 20px;
+            line-height: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .close-overlay-btn:hover { background: #fff; color: #000; border-color: #fff; }
+
+        #overlay-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+        }
     </style>
 </head>
-<body>
+<body class="bg-grid">
 
-    <div class="tabs">
-        <button class="tab active" data-view="games">Games</button>
-        <button class="tab" data-view="tools">Tools</button>
-        <button class="tab" data-view="settings">Instellingen</button>
-    </div>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" data-view="games">Games</button>
+            <button class="tab" data-view="tools">Tools</button>
+            <button class="tab" data-view="settings">Settings</button>
+        </div>
 
-    <div id="view-games" class="view active">
-        <input type="text" class="search" id="search" placeholder="Zoeken...">
-        <div class="grid" id="games-grid"></div>
-    </div>
+        <div id="view-games" class="view active">
+            <input type="text" class="search" id="search" placeholder="Search games...">
+            <div class="grid" id="games-grid"></div>
+        </div>
 
-    <div id="view-tools" class="view">
-        <div class="grid" id="tools-grid"></div>
-        <button class="btn" style="margin-top:20px;" onclick="openModal()">+ Tool Toevoegen</button>
-    </div>
-
-    <div id="view-settings" class="view">
-        <div class="setting">
-            <div class="toggle-wrap">
-                <div>
-                    <h4>About:Blank Cloak</h4>
-                    <p>Opent in leeg venster</p>
-                </div>
-                <div class="toggle on" id="toggle-ab" onclick="toggleAB()"></div>
+        <div id="view-tools" class="view">
+            <div class="grid" id="tools-grid"></div>
+            <div style="margin-top:24px;">
+                <button class="btn" onclick="openModal()">+ Add Tool</button>
             </div>
         </div>
-        <div class="setting">
-            <h4>Venster Titel</h4>
-            <p>Titel voor about:blank venster</p>
-            <input type="text" id="ab-title" placeholder="Loading...">
-        </div>
-        <div class="setting">
-            <h4>Tab Cloak</h4>
-            <p>Verander tab uiterlijk</p>
-            <select id="cloak-select">
-                <option value="default">Portal</option>
-                <option value="google">Google</option>
-                <option value="classroom">Classroom</option>
-                <option value="drive">Drive</option>
-                <option value="docs">Docs</option>
-            </select>
-        </div>
-        <div class="setting">
-            <h4>Panic Key</h4>
-            <p>Druk toets om te vluchten</p>
-            <div class="row">
-                <input type="text" id="panic-key" placeholder="`" style="width:70px; text-align:center;" readonly>
-                <input type="text" id="panic-url" placeholder="https://google.com">
+
+        <div id="view-settings" class="view">
+            <div class="setting-group">
+                <div class="toggle-wrap">
+                    <div>
+                        <h4>About:Blank Cloak</h4>
+                        <p>Opens games in a detached blank window</p>
+                    </div>
+                    <div class="toggle on" id="toggle-ab" onclick="toggleAB()"></div>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h4>Window Title</h4>
+                <p>Title for the About:Blank window</p>
+                <input type="text" id="ab-title" placeholder="Loading...">
+            </div>
+
+            <div class="setting-group">
+                <h4>Tab Cloak</h4>
+                <p>Change the look of this tab</p>
+                <select id="cloak-select">
+                    <option value="default">Portal</option>
+                    <option value="google">Google</option>
+                    <option value="classroom">Classroom</option>
+                    <option value="drive">Drive</option>
+                    <option value="docs">Docs</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <h4>Theme Color</h4>
+                <p>Accent color for UI elements</p>
+                <input type="color" id="theme-color" value="#ffffff">
+            </div>
+
+            <div class="setting-group">
+                <h4>Background Style</h4>
+                <p>Visual background pattern</p>
+                <select id="bg-select">
+                    <option value="bg-grid">Grid</option>
+                    <option value="bg-dots">Dots</option>
+                    <option value="none">None</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <h4>Panic Key</h4>
+                <p>Press key to escape immediately</p>
+                <div class="row">
+                    <input type="text" id="panic-key" placeholder="Key" style="flex: 0 0 80px; text-align:center;" readonly>
+                    <input type="url" id="panic-url" placeholder="https://google.com">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h4>Data Management</h4>
+                <p>Clear all saved settings and tools</p>
+                <button class="btn btn-danger" onclick="clearData()">Clear All Data</button>
             </div>
         </div>
     </div>
 
     <div id="modal">
         <div class="modal-box">
-            <h3>Tool Toevoegen</h3>
-            <input type="text" id="bm-name" placeholder="Naam">
-            <textarea id="bm-code" placeholder="javascript:..."></textarea>
+            <h3>Add New Tool</h3>
+            <input type="text" id="bm-name" placeholder="Name (e.g. Calculator)">
+            <textarea id="bm-code" placeholder="javascript:alert('Hello')"></textarea>
             <div class="modal-btns">
-                <button class="btn btn-ghost" onclick="closeModal()">Annuleren</button>
-                <button class="btn" onclick="saveTool()">Opslaan</button>
+                <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+                <button class="btn" onclick="saveTool()">Save</button>
             </div>
         </div>
+    </div>
+
+    <div id="game-overlay">
+        <!-- Floating Close Button -->
+        <div class="close-overlay-btn" onclick="closeOverlay()">×</div>
+        
+        <iframe id="overlay-frame" allowfullscreen></iframe>
     </div>
 
     <script>
         var BASE = "https://cdn.jsdelivr.net/gh/HyperRushNet/c6xc@96e8e4e333a69bb2cc9f3df1794607296b55be33/";
         
         var games = [];
-        var tools = []; // Start leeg
-        var cfg = { panicKey: '`', panicUrl: 'https://google.com', cloak: 'default', abOn: true, abTitle: '' };
+        
+        var defaultTools = [
+            { name: "Google", code: "javascript:window.location.href='https://google.com'" },
+            { name: "Calculator", code: "javascript:alert(eval(prompt('Calc:')))" },
+            { name: "Edit Page", code: "javascript:document.body.contentEditable='true';" }
+        ];
+
+        var tools = [];
+        var cfg = { 
+            panicKey: '`', 
+            panicUrl: 'https://google.com', 
+            cloak: 'default', 
+            abOn: true, 
+            abTitle: '',
+            theme: '#ffffff',
+            bgStyle: 'bg-grid'
+        };
 
         // Init
         loadCfg();
@@ -245,13 +392,18 @@
         bindEvents();
 
         function loadCfg() {
-            var s = localStorage.getItem('cfg');
+            var s = localStorage.getItem('portal_cfg');
             if (s) cfg = JSON.parse(s);
+            
             document.getElementById('ab-title').value = cfg.abTitle || '';
             document.getElementById('cloak-select').value = cfg.cloak || 'default';
             document.getElementById('panic-key').value = cfg.panicKey || '`';
             document.getElementById('panic-url').value = cfg.panicUrl || '';
+            document.getElementById('theme-color').value = cfg.theme || '#ffffff';
+            document.getElementById('bg-select').value = cfg.bgStyle || 'bg-grid';
             document.getElementById('toggle-ab').className = cfg.abOn ? 'toggle on' : 'toggle';
+            
+            applyTheme();
             applyCloak();
         }
 
@@ -260,8 +412,25 @@
             cfg.cloak = document.getElementById('cloak-select').value;
             cfg.panicKey = document.getElementById('panic-key').value;
             cfg.panicUrl = document.getElementById('panic-url').value;
-            localStorage.setItem('cfg', JSON.stringify(cfg));
+            cfg.theme = document.getElementById('theme-color').value;
+            cfg.bgStyle = document.getElementById('bg-select').value;
+            localStorage.setItem('portal_cfg', JSON.stringify(cfg));
+            applyTheme();
             applyCloak();
+        }
+
+        function applyTheme() {
+            document.documentElement.style.setProperty('--accent', cfg.theme);
+            document.body.className = '';
+            if(cfg.bgStyle !== 'none') document.body.classList.add(cfg.bgStyle);
+        }
+
+        function clearData() {
+            if(confirm('Are you sure you want to reset everything?')) {
+                localStorage.removeItem('portal_cfg');
+                localStorage.removeItem('portal_tools');
+                location.reload();
+            }
         }
 
         function applyCloak() {
@@ -290,7 +459,6 @@
         }
 
         function bindEvents() {
-            // Tabs
             document.querySelectorAll('.tab').forEach(function(t) {
                 t.onclick = function() {
                     document.querySelectorAll('.tab').forEach(function(x) { x.className = 'tab'; });
@@ -300,7 +468,6 @@
                 };
             });
 
-            // Search
             document.getElementById('search').oninput = function(e) {
                 var q = e.target.value.toLowerCase();
                 document.querySelectorAll('.game-card').forEach(function(c) {
@@ -308,10 +475,11 @@
                 });
             };
 
-            // Settings inputs
-            document.getElementById('ab-title').onchange = saveCfg;
-            document.getElementById('cloak-select').onchange = saveCfg;
-            document.getElementById('panic-url').onchange = saveCfg;
+            var inputs = ['ab-title', 'cloak-select', 'panic-url', 'theme-color', 'bg-select'];
+            inputs.forEach(function(id) {
+                document.getElementById(id).onchange = saveCfg;
+            });
+
             document.getElementById('panic-key').onkeydown = function(e) {
                 e.preventDefault();
                 e.target.value = e.key.toUpperCase();
@@ -319,7 +487,6 @@
                 saveCfg();
             };
 
-            // Panic
             document.onkeydown = function(e) {
                 if (e.key === cfg.panicKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
                     window.location.replace(cfg.panicUrl);
@@ -335,7 +502,7 @@
                     renderGames();
                 })
                 .catch(function() {
-                    document.getElementById('games-grid').innerText = 'Fout bij laden';
+                    document.getElementById('games-grid').innerText = 'Error loading games';
                 });
         }
 
@@ -346,43 +513,86 @@
             document.getElementById('games-grid').innerHTML = html;
         }
 
+        // Universal Loader: Always fetch first, then use srcdoc or document.write
         function launch(path) {
             var url = BASE + path + '/index.html';
-            if (cfg.abOn) {
-                var win = window.open('about:blank', '_blank');
-                if (!win) return alert('Pop-up geblokkeerd');
-                win.document.write('<html><head><title>' + (cfg.abTitle || 'Loading...') + '</title></head><body style="background:#000;color:#fff;font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;">Laden...</body></html>');
-                fetch(url).then(function(r) { return r.text(); }).then(function(html) {
-                    win.document.open();
-                    win.document.write(html.replace('<head>', '<head><base href="' + BASE + path + '/">'));
+
+            fetch(url).then(function(r) { return r.text(); }).then(function(html) {
+                // Inject base tag to fix relative paths
+                var base = '<base href="' + BASE + path + '/">';
+                var finalHtml = html.replace('<head>', '<head>' + base);
+
+                if (cfg.abOn) {
+                    // About:Blank Method
+                    var win = window.open('about:blank', '_blank');
+                    if (!win) return alert('Pop-up blocked! Please allow pop-ups.');
+                    
+                    win.document.write('<html><head><title>' + (cfg.abTitle || 'Loading...') + '</title></head><body style="background:#000;margin:0;"><iframe style="border:none;width:100%;height:100%;" srcdoc="' + escapeHtml(finalHtml) + '"></iframe></body></html>');
                     win.document.close();
-                });
-            } else {
-                window.open(url, '_blank');
-            }
+                } else {
+                    // Overlay Method (Srcdoc)
+                    document.getElementById('overlay-frame').srcdoc = finalHtml;
+                    document.getElementById('game-overlay').classList.add('active');
+                }
+            }).catch(function(err) {
+                alert('Failed to load game.');
+            });
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+        }
+
+        function closeOverlay() {
+            document.getElementById('game-overlay').classList.remove('active');
+            document.getElementById('overlay-frame').srcdoc = ''; // Clear memory
         }
 
         function loadTools() {
-            var saved = localStorage.getItem('tools');
-            if (saved) tools = JSON.parse(saved); // Alleen laden als er opgeslagen tools zijn
+            var saved = localStorage.getItem('portal_tools');
+            if (saved) {
+                tools = JSON.parse(saved);
+            } else {
+                tools = defaultTools;
+                localStorage.setItem('portal_tools', JSON.stringify(tools));
+            }
             renderTools();
         }
 
         function renderTools() {
             if (tools.length === 0) {
-                document.getElementById('tools-grid').innerHTML = '<p style="color:#555; grid-column: 1/-1;">Nog geen tools toegevoegd.</p>';
+                document.getElementById('tools-grid').innerHTML = '<div style="padding:20px;color:#555; grid-column: 1/-1;">No tools added yet.</div>';
                 return;
             }
-            var html = tools.map(function(t) {
-                return '<div class="card"><div>' + t.name + '</div><a href="' + t.code + '" style="color:#666;font-size:11px; margin-top:8px; display:block; text-decoration:none;">Run</a></div>';
+            
+            var html = tools.map(function(t, index) {
+                return '<div class="card" onclick="runTool(\'' + index + '\')">' +
+                            '<button class="delete-btn" onclick="deleteTool(event, ' + index + ')">×</button>' +
+                            '<div>' + t.name + '</div>' +
+                            '<small>Click to run</small>' +
+                       '</div>';
             }).join('');
+            
             document.getElementById('tools-grid').innerHTML = html;
         }
 
-        function openModal() {
-            document.getElementById('modal').style.display = 'flex';
+        function runTool(index) {
+            var code = tools[index].code;
+            var a = document.createElement('a');
+            a.href = code;
+            a.click();
         }
 
+        function deleteTool(e, index) {
+            e.stopPropagation();
+            if(confirm('Delete this tool?')) {
+                tools.splice(index, 1);
+                localStorage.setItem('portal_tools', JSON.stringify(tools));
+                renderTools();
+            }
+        }
+
+        function openModal() { document.getElementById('modal').style.display = 'flex'; }
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
             document.getElementById('bm-name').value = '';
@@ -392,10 +602,11 @@
         function saveTool() {
             var n = document.getElementById('bm-name').value;
             var c = document.getElementById('bm-code').value;
-            if (!n || !c) return;
+            if (!n || !c) return alert('Please enter a name and code.');
             if (c.indexOf('javascript:') !== 0) c = 'javascript:' + c;
+            
             tools.push({ name: n, code: c });
-            localStorage.setItem('tools', JSON.stringify(tools));
+            localStorage.setItem('portal_tools', JSON.stringify(tools));
             renderTools();
             closeModal();
         }
