@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#050505;--card-bg:rgba(15,15,15,0.95);--card-hover:rgba(30,30,30,1);--text:#e5e5e5;--text-muted:#525252;--border:rgba(255,255,255,0.08);--accent:#444}
+        *{box-sizing:border-box;margin:0;padding:0}
+        ::-webkit-scrollbar{display:none}
+        body{font-family:Outfit,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding:20px;scrollbar-width:none}
+        .bg{position:fixed;inset:0;z-index:-1;background:url(https://wallpapers.com/images/hd/mythical-1920-x-1080-background-ghfuhrbjpnyy19ut.jpg) center/cover no-repeat fixed;opacity:.3}
+        .container{max-width:1200px;margin:0 auto;position:relative;z-index:2}
+        .search-wrap{position:relative;width:100%;margin-bottom:20px}
+        input{width:100%;padding:14px 20px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;color:#fff;font-size:1rem;outline:0;width:100%}
+        #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+        .card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px 10px;text-align:center;cursor:pointer;transition:all .2s;min-height:100px;display:flex;align-items:center;justify-content:center}
+        .card:hover{border-color:var(--accent);background:var(--card-hover);transform:translateY(-2px)}
+        .name{font-size:.85rem;font-weight:500;color:#ccc}
+        .hidden{display:none}
+    </style>
+</head>
+<body>
+    <div class="bg"></div>
+    <div class="container">
+        <div class="search-wrap">
+            <input id="s" placeholder="Search games..." autocomplete="off">
+        </div>
+        <main id="grid">Laden...</main>
+    </div>
+
+    <script>
+        var COMMIT = "96e8e4e333a69bb2cc9f3df1794607296b55be33";
+        var BASE = "https://cdn.jsdelivr.net/gh/HyperRushNet/c6xc@" + COMMIT + "/";
+        var games = [];
+
+        function init() {
+            google.script.run.withSuccessHandler(function(res) {
+                if(res !== "Geen") console.log("Laatst gespeeld:", res);
+            }).loadUserData();
+
+            fetch(BASE + "game-data.json")
+                .then(function(r) { return r.json(); })
+                .then(function(d) {
+                    games = d;
+                    render();
+                })
+                .catch(function() { document.getElementById("grid").innerText = "Fout bij laden."; });
+        }
+
+        function render() {
+            var html = "";
+            var sorted = games.sort(function(a, b) { return a.name.localeCompare(b.name); });
+            for (var i = 0; i < sorted.length; i++) {
+                html += '<div class="card" onclick="run(\'' + sorted[i].path + '\', \'' + sorted[i].name + '\')">' +
+                        '<span class="name">' + sorted[i].name + '</span>' +
+                        '</div>';
+            }
+            document.getElementById("grid").innerHTML = html;
+        }
+
+        function run(path, name) {
+            // Sla op in de cloud
+            google.script.run.saveUserData(name);
+
+            // Open een echt leeg tabblad
+            var newWin = window.open('about:blank', '_blank');
+            if(!newWin) return alert("Pop-ups geblokkeerd!");
+
+            // Laat de gebruiker weten dat het laadt
+            newWin.document.write("<html><body style='background:#000;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;'>Loading " + name + "...</body></html>");
+
+            // Haal de game code op
+            fetch(BASE + path + "/index.html")
+                .then(function(r) { return r.json(); }) // Als het JSON is, anders .text()
+                .catch(function() { return fetch(BASE + path + "/index.html").then(function(r){return r.text()}); })
+                .then(function(html) {
+                    // Injecteer de volledige HTML in de about:blank pagina
+                    newWin.document.open();
+                    newWin.document.write(html);
+                    newWin.document.close();
+                })
+                .catch(function(err) {
+                    newWin.document.body.innerHTML = "Fout bij laden van game data.";
+                });
+        }
+
+        document.getElementById("s").oninput = function(e) {
+            var val = e.target.value.toLowerCase();
+            var cards = document.getElementsByClassName("card");
+            for (var i = 0; i < cards.length; i++) {
+                var match = cards[i].textContent.toLowerCase().indexOf(val) > -1;
+                cards[i].classList.toggle("hidden", !match);
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>
