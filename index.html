@@ -1,605 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal</title>
-    <style>
-        :root {
-            --bg-color: #050505;
-            --text-color: #e0e0e0;
-            --accent: #ffffff;
-            --border-color: #222;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; border-radius: 0 !important; }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #333; }
-        ::-webkit-scrollbar-thumb:hover { background: #444; }
-
-        /* Animated Background */
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            color: var(--text-color);
-            min-height: 100vh;
-            padding: 24px;
-            overflow-x: hidden;
-            background-color: var(--bg-color);
-            background: linear-gradient(-45deg, #000000, #0a0a0a, #050505, #0f0f0f);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            margin-bottom: 32px;
-            border-bottom: 2px solid var(--border-color);
-        }
-        .tab {
-            background: none;
-            border: none;
-            color: #555;
-            padding: 12px 24px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
-            transition: all 0.2s;
-        }
-        .tab.active { color: var(--text-color); border-bottom-color: var(--accent); }
-        .tab:hover { color: #aaa; }
-
-        /* Views */
-        .view { display: none; }
-        .view.active { display: block; }
-
-        /* Search */
-        .search {
-            width: 100%;
-            padding: 14px;
-            background: rgba(0,0,0,0.6);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            margin-bottom: 24px;
-            font-size: 14px;
-            outline: none;
-        }
-        .search:focus { border-color: var(--accent); }
-
-        /* Grid - Transparent Empty Space */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 12px;
-        }
-
-        /* Card */
-        .card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            padding: 32px 16px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 14px;
-            color: var(--text-color);
-            transition: all 0.2s;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            min-height: 120px;
-        }
-        .card:hover { 
-            background: rgba(255,255,255,0.08); 
-            border-color: #444; 
-            transform: translateY(-2px);
-        }
-        .card small { opacity: 0.5; font-size: 11px; display: block; margin-top: 8px; }
-
-        /* Tool Card Actions */
-        .card .delete-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(0,0,0,0.8);
-            border: 1px solid #333;
-            color: #ff5555;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-        .card:hover .delete-btn { opacity: 1; }
-        .card .delete-btn:hover { background: #ff5555; color: #000; border-color: #ff5555; }
-
-        /* Settings */
-        .setting-group {
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            margin-bottom: 16px;
-            background: rgba(0,0,0,0.3);
-        }
-        .setting-group h4 { font-size: 14px; margin-bottom: 4px; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
-        .setting-group p { font-size: 12px; color: #666; margin-bottom: 16px; }
-
-        input[type="text"], input[type="url"], select, input[type="color"] {
-            width: 100%;
-            padding: 10px;
-            background: #000;
-            border: 1px solid var(--border-color);
-            color: #fff;
-            font-size: 14px;
-            outline: none;
-        }
-        input[type="color"] { height: 42px; padding: 2px; cursor: pointer; }
-        
-        /* Toggle */
-        .toggle-wrap { display: flex; justify-content: space-between; align-items: center; }
-        .toggle { 
-            width: 48px; 
-            height: 24px; 
-            background: #222; 
-            position: relative; 
-            cursor: pointer; 
-            border: 1px solid #333;
-        }
-        .toggle.on { background: var(--accent); border-color: var(--accent); }
-        .toggle::after {
-            content: "";
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            background: #555;
-            top: 2px;
-            left: 2px;
-            transition: left 0.2s, background 0.2s;
-        }
-        .toggle.on::after { left: 26px; background: #000; }
-
-        /* Buttons */
-        .btn {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            font-size: 13px;
-            cursor: pointer;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .btn:hover { opacity: 0.9; }
-        .btn-ghost { background: transparent; border: 1px solid #333; color: #fff; }
-        .btn-danger { background: transparent; border: 1px solid #ff3333; color: #ff3333; }
-
-        /* Instructions Box */
-        .instructions {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px dashed #333;
-            padding: 16px;
-            margin-bottom: 24px;
-            font-size: 13px;
-            color: #888;
-            line-height: 1.6;
-        }
-        .instructions strong { color: #fff; display: block; margin-bottom: 8px; }
-
-        /* Modal */
-        #modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            z-index: 100;
-        }
-        .modal-box {
-            background: #0a0a0a;
-            border: 1px solid #333;
-            padding: 24px;
-            width: 100%;
-            max-width: 420px;
-        }
-        .modal-box h3 { margin-bottom: 20px; font-size: 16px; text-transform: uppercase; }
-        .modal-box input, .modal-box textarea {
-            width: 100%;
-            margin-bottom: 12px;
-            padding: 10px;
-            background: #000;
-            border: 1px solid #222;
-            color: #fff;
-            font-size: 13px;
-        }
-        .modal-box textarea { height: 100px; resize: none; font-family: monospace; }
-        .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-
-        /* Game Overlay */
-        #game-overlay {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            z-index: 200;
-            display: none;
-        }
-        #game-overlay.active { display: block; }
-        
-        /* Floating X */
-        .close-overlay-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 201;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            width: 32px;
-            height: 32px;
-            font-size: 20px;
-            line-height: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .close-overlay-btn:hover { background: #fff; color: #000; border-color: #fff; }
-
-        #overlay-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: #000;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TUN</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23000' width='100' height='100'/></svg>">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#333}
+::-webkit-scrollbar-thumb:hover{background:#fff}
+:root{--bg:#050505;--panel:#0a0a0a;--input:#000;--text:#e0e0e0;--muted:#666;--accent:#fff;--border:#222;--hover:#333}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 15% 50%,rgba(255,255,255,.02),transparent 25%),radial-gradient(circle at 85% 30%,rgba(255,255,255,.02),transparent 25%) var(--bg)}
+.c{max-width:1400px;margin:0 auto;padding:40px 24px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:20px;flex-wrap:wrap;gap:20px}
+h1{font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text)}
+h1 span{color:var(--muted);font-weight:400;margin-left:10px;display:none}
+@media (min-width:600px){h1 span{display:inline}}
+nav{display:flex;gap:20px}
+nav button{background:none;border:none;color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;cursor:pointer;padding:5px 0;border-bottom:2px solid transparent;transition:all .2s}
+nav button.active{color:var(--text);border-bottom-color:var(--accent)}
+nav button:hover{color:var(--text)}
+.view{display:none;opacity:0;transition:opacity .2s}
+.view.active{display:block;opacity:1}
+.search{margin-bottom:32px;display:flex;gap:12px}
+input,select{background:var(--input);border:1px solid var(--border);color:var(--text);padding:12px 16px;font-size:14px;outline:none;transition:border-color .2s;width:100%}
+input:focus,select:focus{border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1px;background:transparent}
+.card{background:var(--panel);border:1px solid var(--border);padding:24px 12px;aspect-ratio:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.card:hover{background:#0f0f0f;border-color:var(--hover);transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,.5)}
+.card-t{font-size:13px;font-weight:500;margin-top:8px;color:var(--text);pointer-events:none}
+.card-s{font-size:10px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;pointer-events:none}
+.card-i{width:40px;height:40px;background:#000;border:1px solid #222;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--accent);pointer-events:none}
+.del{position:absolute;top:8px;right:8px;background:transparent;border:1px solid transparent;color:#ff3333;width:20px;height:20px;font-size:14px;cursor:pointer;opacity:0;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.card:hover .del{opacity:.6;border-color:#ff3333}
+.del:hover{opacity:1!important;background:#ff3333;color:#000}
+.set-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.p{background:var(--panel);border:1px solid var(--border);padding:24px;display:flex;flex-direction:column;gap:16px}
+.p-h{border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:8px}
+.p-t{font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.p-d{font-size:12px;color:var(--muted);margin-top:4px}
+.lbl{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.row{display:flex;gap:12px}
+.row>*{flex:1}
+.t-w{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+.t-l h4{font-size:14px;color:var(--text)}
+.t-l p{font-size:11px;color:var(--muted)}
+.t{width:40px;height:20px;background:#222;border:1px solid #333;cursor:pointer;position:relative;transition:background .2s}
+.t.on{background:var(--accent);border-color:var(--accent)}
+.t::after{content:'';position:absolute;width:14px;height:14px;background:#555;top:2px;left:2px;transition:all .2s}
+.t.on::after{left:22px;background:#000}
+.btn{background:var(--accent);color:#000;border:none;padding:12px 24px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;transition:all .2s;border:1px solid transparent}
+.btn:hover{opacity:.9;box-shadow:0 0 15px rgba(255,255,255,.1)}
+.btn.o{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn.o:hover{border-color:var(--accent);background:rgba(255,255,255,.05)}
+.btn.d{background:#ff3333;color:#fff}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(10px);display:none;justify-content:center;align-items:center;z-index:100;padding:20px}
+.m-c{background:var(--panel);border:1px solid var(--border);width:100%;max-width:450px;padding:32px}
+.m-h{margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:16px}
+.m-t{font-size:18px;text-transform:uppercase;letter-spacing:1px}
+.m-f{margin-top:24px;display:flex;justify-content:flex-end;gap:12px}
+#ov{position:fixed;inset:0;z-index:200;background:#000;display:none;flex-direction:column}
+#ov.on{display:flex}
+#ov-f{width:100%;height:100%;border:none;background:#000}
+.ov-x{position:fixed;top:20px;right:20px;z-index:201;background:rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.1);color:#fff;width:40px;height:40px;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;opacity:.5}
+.ov-x:hover{opacity:1;background:#fff;color:#000;border-color:#fff}
+</style>
 </head>
 <body>
-
-    <div class="container">
-        <div class="tabs">
-            <button class="tab active" data-view="games">Games</button>
-            <button class="tab" data-view="tools">Tools</button>
-            <button class="tab" data-view="settings">Settings</button>
-        </div>
-
-        <!-- Games View -->
-        <div id="view-games" class="view active">
-            <input type="text" class="search" id="search" placeholder="Search games...">
-            <div class="grid" id="games-grid"></div>
-        </div>
-
-        <!-- Tools View -->
-        <div id="view-tools" class="view">
-            <div class="instructions">
-                <strong>How to use Tools</strong>
-                1. <u>Drag</u> a tool card to your bookmarks bar to save it permanently.<br>
-                2. <u>Click</u> a tool to run it instantly on the current page.<br>
-                3. Add custom scripts via the button below.
-            </div>
-            <div class="grid" id="tools-grid"></div>
-            <div style="margin-top:24px;">
-                <button class="btn" onclick="openModal()">+ Add Tool</button>
-            </div>
-        </div>
-
-        <!-- Settings View -->
-        <div id="view-settings" class="view">
-            <div class="setting-group">
-                <div class="toggle-wrap">
-                    <div>
-                        <h4>About:Blank Cloak</h4>
-                        <p>Opens games in a detached, untraceable window.</p>
-                    </div>
-                    <div class="toggle on" id="toggle-ab" onclick="toggleAB()"></div>
-                </div>
-            </div>
-
-            <div class="setting-group">
-                <h4>Window Title</h4>
-                <p>Custom title for the cloaked window.</p>
-                <input type="text" id="ab-title" placeholder="Loading...">
-            </div>
-
-            <div class="setting-group">
-                <h4>Tab Cloak</h4>
-                <p>Disguise this page in browser history.</p>
-                <select id="cloak-select">
-                    <option value="default">Portal</option>
-                    <option value="google">Google</option>
-                    <option value="classroom">Classroom</option>
-                    <option value="drive">Drive</option>
-                    <option value="docs">Docs</option>
-                </select>
-            </div>
-
-            <div class="setting-group">
-                <h4>Theme Color</h4>
-                <p>Primary accent color.</p>
-                <input type="color" id="theme-color" value="#ffffff">
-            </div>
-
-            <div class="setting-group">
-                <h4>Data Management</h4>
-                <p>Reset all custom settings and tools.</p>
-                <button class="btn btn-danger" onclick="clearData()">Clear All Data</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal">
-        <div class="modal-box">
-            <h3>Add New Tool</h3>
-            <input type="text" id="bm-name" placeholder="Name (e.g. Calculator)">
-            <textarea id="bm-code" placeholder="javascript:alert('Hello')"></textarea>
-            <div class="modal-btns">
-                <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-                <button class="btn" onclick="saveTool()">Save</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="game-overlay">
-        <div class="close-overlay-btn" onclick="closeOverlay()">×</div>
-        <iframe id="overlay-frame" allowfullscreen></iframe>
-    </div>
-
-    <script>
-        var BASE = "https://cdn.jsdelivr.net/gh/HyperRushNet/c6xc@96e8e4e333a69bb2cc9f3df1794607296b55be33/";
-        
-        var games = [];
-        
-        // Default Tools
-        var defaultTools = [
-            { name: "Google", code: "javascript:window.location.href='https://google.com'" },
-            { name: "Calculator", code: "javascript:alert(eval(prompt('Calc:')))" },
-            { name: "Edit Page", code: "javascript:document.body.contentEditable='true';" }
-        ];
-
-        var tools = [];
-        var cfg = { 
-            cloak: 'default', 
-            abOn: true, 
-            abTitle: '',
-            theme: '#ffffff'
-        };
-
-        // Init
-        loadCfg();
-        loadGames();
-        loadTools();
-        bindEvents();
-
-        function loadCfg() {
-            var s = localStorage.getItem('portal_cfg');
-            if (s) cfg = JSON.parse(s);
-            
-            document.getElementById('ab-title').value = cfg.abTitle || '';
-            document.getElementById('cloak-select').value = cfg.cloak || 'default';
-            document.getElementById('theme-color').value = cfg.theme || '#ffffff';
-            document.getElementById('toggle-ab').className = cfg.abOn ? 'toggle on' : 'toggle';
-            
-            applyTheme();
-            applyCloak();
-        }
-
-        function saveCfg() {
-            cfg.abTitle = document.getElementById('ab-title').value;
-            cfg.cloak = document.getElementById('cloak-select').value;
-            cfg.theme = document.getElementById('theme-color').value;
-            localStorage.setItem('portal_cfg', JSON.stringify(cfg));
-            applyTheme();
-            applyCloak();
-        }
-
-        function applyTheme() {
-            document.documentElement.style.setProperty('--accent', cfg.theme);
-        }
-
-        function clearData() {
-            if(confirm('Are you sure you want to reset everything?')) {
-                localStorage.removeItem('portal_cfg');
-                localStorage.removeItem('portal_tools');
-                location.reload();
-            }
-        }
-
-        function applyCloak() {
-            var maps = {
-                default: ['Portal', 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23000" width="100" height="100"/></svg>'],
-                google: ['Google', 'https://www.google.com/favicon.ico'],
-                classroom: ['Home', 'https://www.gstatic.com/classroom/logo_square_rounded.svg'],
-                drive: ['My Drive', 'https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png'],
-                docs: ['Google Docs', 'https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png']
-            };
-            var c = maps[cfg.cloak] || maps.default;
-            document.title = c[0];
-            var link = document.querySelector('link[rel="icon"]');
-            if (!link) {
-                link = document.createElement('link');
-                link.rel = 'icon';
-                document.head.appendChild(link);
-            }
-            link.href = c[1];
-        }
-
-        function toggleAB() {
-            cfg.abOn = !cfg.abOn;
-            document.getElementById('toggle-ab').className = cfg.abOn ? 'toggle on' : 'toggle';
-            saveCfg();
-        }
-
-        function bindEvents() {
-            document.querySelectorAll('.tab').forEach(function(t) {
-                t.onclick = function() {
-                    document.querySelectorAll('.tab').forEach(function(x) { x.className = 'tab'; });
-                    document.querySelectorAll('.view').forEach(function(x) { x.className = 'view'; });
-                    t.className = 'tab active';
-                    document.getElementById('view-' + t.dataset.view).className = 'view active';
-                };
-            });
-
-            document.getElementById('search').oninput = function(e) {
-                var q = e.target.value.toLowerCase();
-                document.querySelectorAll('.game-card').forEach(function(c) {
-                    c.style.display = c.dataset.name.indexOf(q) > -1 ? '' : 'none';
-                });
-            };
-
-            var inputs = ['ab-title', 'cloak-select', 'theme-color'];
-            inputs.forEach(function(id) {
-                document.getElementById(id).onchange = saveCfg;
-            });
-        }
-
-        function loadGames() {
-            fetch(BASE + 'game-data.json')
-                .then(function(r) { return r.json(); })
-                .then(function(d) {
-                    games = d.sort(function(a, b) { return a.name.localeCompare(b.name); });
-                    renderGames();
-                })
-                .catch(function() {
-                    document.getElementById('games-grid').innerText = 'Error loading games';
-                });
-        }
-
-        function renderGames() {
-            var html = games.map(function(g) {
-                return '<div class="card game-card" data-name="' + g.name.toLowerCase() + '" onclick="launch(\'' + g.path + '\')">' + g.name + '</div>';
-            }).join('');
-            document.getElementById('games-grid').innerHTML = html;
-        }
-
-        // Loader Logic: Always Fetch -> Srcdoc
-        function launch(path) {
-            var url = BASE + path + '/index.html';
-
-            fetch(url).then(function(r) { return r.text(); }).then(function(html) {
-                var base = '<base href="' + BASE + path + '/">';
-                var finalHtml = html.replace('<head>', '<head>' + base);
-
-                if (cfg.abOn) {
-                    var win = window.open('about:blank', '_blank');
-                    if (!win) return alert('Pop-up blocked! Please allow pop-ups.');
-                    
-                    win.document.write('<html><head><title>' + (cfg.abTitle || 'Loading...') + '</title></head><body style="margin:0;padding:0;overflow:hidden;"><iframe style="border:none;width:100%;height:100vh;" srcdoc="' + escapeHtml(finalHtml) + '"></iframe></body></html>');
-                    win.document.close();
-                } else {
-                    document.getElementById('overlay-frame').srcdoc = finalHtml;
-                    document.getElementById('game-overlay').classList.add('active');
-                }
-            }).catch(function(err) {
-                alert('Failed to load game.');
-            });
-        }
-
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-        }
-
-        function closeOverlay() {
-            document.getElementById('game-overlay').classList.remove('active');
-            document.getElementById('overlay-frame').srcdoc = '';
-        }
-
-        function loadTools() {
-            var saved = localStorage.getItem('portal_tools');
-            if (saved) {
-                tools = JSON.parse(saved);
-            } else {
-                tools = defaultTools;
-                localStorage.setItem('portal_tools', JSON.stringify(tools));
-            }
-            renderTools();
-        }
-
-        function renderTools() {
-            if (tools.length === 0) {
-                document.getElementById('tools-grid').innerHTML = '';
-                return;
-            }
-            
-            var html = tools.map(function(t, index) {
-                // Using an <a> tag inside the card enables Drag & Drop to Bookmarks
-                return '<div class="card">' +
-                            '<button class="delete-btn" onclick="deleteTool(event, ' + index + ')">×</button>' +
-                            // Draggable Link
-                            '<a href="' + t.code + '" style="color:inherit; text-decoration:none; cursor:move;" draggable="true" onclick="runTool(event, \'' + index + '\')">' +
-                                '<div>' + t.name + '</div>' +
-                                '<small>Drag to Bookmarks</small>' +
-                            '</a>' +
-                       '</div>';
-            }).join('');
-            
-            document.getElementById('tools-grid').innerHTML = html;
-        }
-
-        function runTool(e, index) {
-            e.preventDefault(); // Prevent default link navigation
-            var code = tools[index].code;
-            // Execute JS
-            try {
-                // Create a temporary anchor to run the javascript: URI
-                var a = document.createElement('a');
-                a.href = code;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            } catch(e) {
-                console.error(e);
-            }
-        }
-
-        function deleteTool(e, index) {
-            e.stopPropagation(); e.preventDefault();
-            if(confirm('Delete this tool?')) {
-                tools.splice(index, 1);
-                localStorage.setItem('portal_tools', JSON.stringify(tools));
-                renderTools();
-            }
-        }
-
-        function openModal() { document.getElementById('modal').style.display = 'flex'; }
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('bm-name').value = '';
-            document.getElementById('bm-code').value = '';
-        }
-
-        function saveTool() {
-            var n = document.getElementById('bm-name').value;
-            var c = document.getElementById('bm-code').value;
-            if (!n || !c) return alert('Please enter a name and code.');
-            if (c.indexOf('javascript:') !== 0) c = 'javascript:' + c;
-            
-            tools.push({ name: n, code: c });
-            localStorage.setItem('portal_tools', JSON.stringify(tools));
-            renderTools();
-            closeModal();
-        }
-    </script>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23000' width='100' height='100'/>">
+<div class="bg"></div>
+<div class="c">
+<header>
+<h1>TUN <span>v2.0</span></h1>
+<nav>
+<button class="active" data-view="games">Games</button>
+<button data-view="links">Shortcuts</button>
+<button data-view="settings">Settings</button>
+</nav>
+</header>
+<div id="view-games" class="view active">
+<div class="search"><input type="text" id="search-games" placeholder="Search library..."></div>
+<div class="grid" id="grid-games"></div>
+</div>
+<div id="view-links" class="view">
+<div class="search"><input type="text" id="search-links" placeholder="Search shortcuts..."></div>
+<div class="grid" id="grid-links"></div>
+<div style="margin-top:24px"><button class="btn" onclick="openModal()">+ Add Shortcut</button></div>
+</div>
+<div id="view-settings" class="view">
+<div class="set-g">
+<div class="p">
+<div class="p-h"><div class="p-t">Launch Behavior</div><div class="p-d">Control how games and apps are opened.</div></div>
+<div class="t-w"><div class="t-l"><h4>Stealth Cloak</h4><p>Opens in 'about:blank' window.</p></div><div class="t on" id="s-cloak" onclick="toggle('cloak')"></div></div>
+<div class="t-w"><div class="t-l"><h4>Cloak Parent</h4><p>Disguises this page after opening.</p></div><div class="t" id="s-hide" onclick="toggle('hide')"></div></div>
+<div class="t-w"><div class="t-l"><h4>Clickoff Cloak</h4><p>Disguises when you leave tab.</p></div><div class="t" id="s-clickoff" onclick="toggle('clickoff')"></div></div>
+<div class="t-w"><div class="t-l"><h4>Instant Launch</h4><p>Skips loading animations.</p></div><div class="t on" id="s-instant" onclick="toggle('instant')"></div></div>
+<div class="lbl">Cloaked Window Title</div>
+<input type="text" id="s-title" placeholder="Loading..." oninput="save()">
+</div>
+<div class="p">
+<div class="p-h"><div class="p-t">Tab Disguise</div><div class="p-d">Make this page look like something else.</div></div>
+<div class="lbl">Disguise As</div>
+<select id="s-disguise" onchange="save()">
+<option value="default">TUN (Default)</option>
+<option value="google">Google Search</option>
+<option value="classroom">Google Classroom</option>
+<option value="drive">Google Drive</option>
+<option value="docs">Google Docs</option>
+</select>
+<div class="lbl" style="margin-top:16px">Accent Color</div>
+<div class="row">
+<input type="color" id="s-accent" value="#ffffff" oninput="save()" style="padding:0;height:42px;border:1px solid var(--border)">
+<button class="btn o" onclick="resetAccent()">Reset</button>
+</div>
+</div>
+<div class="p">
+<div class="p-h"><div class="p-t">Data</div><div class="p-d">Manage local configuration.</div></div>
+<div class="lbl">Export Settings</div>
+<button class="btn o" style="width:100%" onclick="exportData()">Download Backup</button>
+<div class="lbl" style="margin-top:12px">Danger Zone</div>
+<button class="btn d" style="width:100%" onclick="clearAll()">Clear All Data</button>
+</div>
+</div>
+</div>
+</div>
+<div id="modal">
+<div class="m-c">
+<div class="m-h"><div class="m-t">Add Shortcut</div></div>
+<div class="lbl">Name</div><input type="text" id="i-name" placeholder="e.g. YouTube">
+<div class="lbl" style="margin-top:12px">URL</div><input type="text" id="i-url" placeholder="https://youtube.com">
+<div class="m-f"><button class="btn o" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveLink()">Save</button></div>
+</div>
+</div>
+<div id="ov"><div class="ov-x" onclick="closeOv()">×</div><iframe id="ov-f" allowfullscreen></iframe></div>
+<script>
+const C={cloak:1,hide:0,clickoff:0,instant:1,title:"Loading...",disguise:"default",accent:"#ffffff"},B="https://cdn.jsdelivr.net/gh/HyperRushNet/c6xc@96e8e4e333a69bb2cc9f3df1794607296b55be33/";
+let G=[],L=[],cfg={};
+const $=s=>document.getElementById(s),esc=s=>s.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+function init(){
+cfg=JSON.parse(localStorage.getItem("tun_cfg"))||C;
+Object.keys(C).forEach(k=>{if(cfg[k]===undefined)cfg[k]=C[k]});
+L=JSON.parse(localStorage.getItem("tun_links"))||[{name:"Google",url:"https://google.com"},{name:"YouTube",url:"https://youtube.com"}];
+applyUI();loadG();renderL();bindEvents();
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&cfg.clickoff)applyDisguise()});
+}
+function applyUI(){
+ $("s-cloak").className="t "+(cfg.cloak?"on":"");
+ $("s-hide").className="t "+(cfg.hide?"on":"");
+ $("s-clickoff").className="t "+(cfg.clickoff?"on":"");
+ $("s-instant").className="t "+(cfg.instant?"on":"");
+ $("s-title").value=cfg.title;
+ $("s-disguise").value=cfg.disguise;
+ $("s-accent").value=cfg.accent;
+applyTheme();applyDisguise();
+}
+function save(){
+cfg.title=$("s-title").value;
+cfg.disguise=$("s-disguise").value;
+cfg.accent=$("s-accent").value;
+localStorage.setItem("tun_cfg",JSON.stringify(cfg));
+applyTheme();applyDisguise();
+}
+function toggle(k){cfg[k]=!cfg[k];save();applyUI();}
+function applyTheme(){document.documentElement.style.setProperty("--accent",cfg.accent)}
+function resetAccent(){$("s-accent").value="#ffffff";save()}
+function applyDisguise(){
+const m={default:["TUN",""],google:["Google","https://www.google.com/favicon.ico"],classroom:["Home","https://www.gstatic.com/classroom/logo_square_rounded.svg"],drive:["My Drive","https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png"],docs:["Google Docs","https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png"]};
+const d=m[cfg.disguise]||m.default;document.title=d[0];
+let l=document.querySelector("link[rel='icon']");if(!l){l=document.createElement("link");l.rel="icon";document.head.appendChild(l)}l.href=d[1];
+}
+function loadG(){
+fetch(B+"game-data.json").then(r=>r.json()).then(d=>{G=d.sort((a,b)=>a.name.localeCompare(b.name));renderG()}).catch(()=>$("grid-games").innerHTML="<div class='card' style='grid-column:1/-1;aspect-ratio:auto'>Error loading games.</div>");
+}
+function renderG(){$("grid-games").innerHTML=G.map(g=>`<div class="card" data-n="${g.name.toLowerCase()}" onclick="launch('${g.path}')"><div class="card-t">${g.name}</div></div>`).join("")}
+function renderL(){$("grid-links").innerHTML=L.map((l,i)=>`<div class="card" data-n="${l.name.toLowerCase()}"><button class="del" onclick="delL(event,${i})">×</button><div class="card-i">${l.name.charAt(0)}</div><div class="card-t">${l.name}</div><div class="card-s">${new URL(l.url).hostname}</div><div style="position:absolute;inset:0" onclick="openU('${l.url}')"></div></div>`).join("")}
+function launch(p){
+const u=B+p+"/index.html";
+fetch(u).then(r=>r.text()).then(h=>{
+const fh=h.replace("<head>",`<head><base href="${B}${p}/">`);
+if(cfg.cloak){
+const w=window.open("about:blank","_blank");
+if(!w)return alert("Popup blocked!");
+w.document.write(`<html><head><title>${cfg.title}</title></head><body style="margin:0;overflow:hidden;background:#000"><iframe style="border:none;width:100%;height:100vh" srcdoc="${esc(fh)}"></iframe></body></html>`);
+w.document.close();
+if(cfg.hide)applyDisguise();
+}else{
+ $("ov-f").srcdoc=fh;$("ov").classList.add("on");
+}
+}).catch(e=>alert("Failed to load game."));
+}
+function openU(u){
+if(cfg.cloak){
+const w=window.open("about:blank","_blank");
+if(!w)return alert("Popup blocked!");
+w.document.write(`<html><head><title>${cfg.title}</title></head><body style="margin:0;overflow:hidden;background:#fff"><iframe style="border:none;width:100%;height:100vh" src="${u}"></iframe></body></html>`);
+w.document.close();
+if(cfg.hide)applyDisguise();
+}else{window.open(u,"_blank");}
+}
+function closeOv(){$("ov").classList.remove("on");$("ov-f").srcdoc=""}
+function delL(e,i){e.stopPropagation();if(confirm("Delete?")){L.splice(i,1);localStorage.setItem("tun_links",JSON.stringify(L));renderL()}}
+function openModal(){$("modal").style.display="flex"}
+function closeModal(){$("modal").style.display="none";$("i-name").value="";$("i-url").value=""}
+function saveLink(){
+let n=$("i-name").value.trim(),u=$("i-url").value.trim();
+if(!n||!u)return alert("Fill all fields");
+if(!u.startsWith("http"))u="https://"+u;
+L.push({name:n,url:u});localStorage.setItem("tun_links",JSON.stringify(L));renderL();closeModal();
+}
+function exportData(){
+const d="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify({cfg:cfg,links:L}));
+const a=document.createElement("a");a.setAttribute("href",d);a.setAttribute("download","tun_backup.json");a.click();
+}
+function clearAll(){if(confirm("Reset everything?")){localStorage.removeItem("tun_cfg");localStorage.removeItem("tun_links");location.reload()}}
+function bindEvents(){
+document.querySelectorAll("nav button").forEach(b=>b.onclick=function(){
+document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
+this.classList.add("active");$("view-"+this.dataset.view).classList.add("active");
+});
+ $("search-games").oninput=e=>{const q=e.target.value.toLowerCase();document.querySelectorAll("#grid-games .card").forEach(c=>c.style.display=c.dataset.n.includes(q)?"":"none")};
+ $("search-links").oninput=e=>{const q=e.target.value.toLowerCase();document.querySelectorAll("#grid-links .card").forEach(c=>c.style.display=c.dataset.n.includes(q)?"":"none")};
+}
+init();
+</script>
 </body>
 </html>
