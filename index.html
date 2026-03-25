@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>TUN</title>
+<!-- Default Fallback Icon -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23000' width='100' height='100'/></svg>">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;border-radius:0;-webkit-font-smoothing:antialiased}
@@ -80,26 +81,30 @@ input:focus,select:focus{border-color:var(--accent)}
 <button data-view="settings">Settings</button>
 </nav>
 </header>
+
 <div id="view-games" class="view active">
 <div class="search"><input type="text" id="search-games" placeholder="Search library..."></div>
 <div class="grid" id="grid-games"></div>
 </div>
+
 <div id="view-links" class="view">
 <div class="search"><input type="text" id="search-links" placeholder="Search shortcuts..."></div>
 <div class="grid" id="grid-links"></div>
 <div style="margin-top:24px"><button class="btn" onclick="openModal()">+ Add Shortcut</button></div>
 </div>
+
 <div id="view-settings" class="view">
 <div class="set-g">
 <div class="p">
 <div class="p-h"><div class="p-t">Launch Behavior</div><div class="p-d">Control how games and apps are opened.</div></div>
-<div class="t-w"><div class="t-l"><h4>Stealth Cloak</h4><p>Opens in 'about:blank' window.</p></div><div class="t on" id="s-cloak" onclick="toggle('cloak')"></div></div>
+<div class="t-w"><div class="t-l"><h4>Stealth Cloak</h4><p>Opens in 'about:blank' window.</p></div><div class="t" id="s-cloak" onclick="toggle('cloak')"></div></div>
 <div class="t-w"><div class="t-l"><h4>Cloak Parent</h4><p>Disguises this page after opening.</p></div><div class="t" id="s-hide" onclick="toggle('hide')"></div></div>
 <div class="t-w"><div class="t-l"><h4>Clickoff Cloak</h4><p>Disguises when you leave tab.</p></div><div class="t" id="s-clickoff" onclick="toggle('clickoff')"></div></div>
-<div class="t-w"><div class="t-l"><h4>Instant Launch</h4><p>Skips loading animations.</p></div><div class="t on" id="s-instant" onclick="toggle('instant')"></div></div>
+<div class="t-w"><div class="t-l"><h4>Instant Launch</h4><p>Skips loading animations.</p></div><div class="t" id="s-instant" onclick="toggle('instant')"></div></div>
 <div class="lbl">Cloaked Window Title</div>
 <input type="text" id="s-title" placeholder="Loading..." oninput="save()">
 </div>
+
 <div class="p">
 <div class="p-h"><div class="p-t">Tab Disguise</div><div class="p-d">Make this page look like something else.</div></div>
 <div class="lbl">Disguise As</div>
@@ -116,16 +121,22 @@ input:focus,select:focus{border-color:var(--accent)}
 <button class="btn o" onclick="resetAccent()">Reset</button>
 </div>
 </div>
+
 <div class="p">
 <div class="p-h"><div class="p-t">Data</div><div class="p-d">Manage local configuration.</div></div>
-<div class="lbl">Export Settings</div>
-<button class="btn o" style="width:100%" onclick="exportData()">Download Backup</button>
+<div class="lbl">Backup</div>
+<div class="row">
+<button class="btn o" onclick="exportData()">Export</button>
+<button class="btn o" onclick="importData()">Import</button>
+<input type="file" id="f-import" accept=".json" style="display:none" onchange="handleFile(event)">
+</div>
 <div class="lbl" style="margin-top:12px">Danger Zone</div>
 <button class="btn d" style="width:100%" onclick="clearAll()">Clear All Data</button>
 </div>
 </div>
 </div>
 </div>
+
 <div id="modal">
 <div class="m-c">
 <div class="m-h"><div class="m-t">Add Shortcut</div></div>
@@ -134,18 +145,26 @@ input:focus,select:focus{border-color:var(--accent)}
 <div class="m-f"><button class="btn o" onclick="closeModal()">Cancel</button><button class="btn" onclick="saveLink()">Save</button></div>
 </div>
 </div>
+
 <div id="ov"><div class="ov-x" onclick="closeOv()">×</div><iframe id="ov-f" allowfullscreen></iframe></div>
+
 <script>
-const C={cloak:1,hide:0,clickoff:0,instant:1,title:"Loading...",disguise:"default",accent:"#ffffff"},B="https://cdn.jsdelivr.net/gh/HyperRushNet/c6xc@96e8e4e333a69bb2cc9f3df1794607296b55be33/";
+const C={cloak:1,hide:0,clickoff:0,instant:1,title:"Loading...",disguise:"default",accent:"#ffffff"};
+const B="https://cdn.jsdelivr.net/gh/HyperRushNet/c6xc@96e8e4e333a69bb2cc9f3df1794607296b55be33/";
 let G=[],L=[],cfg={};
 const $=s=>document.getElementById(s),esc=s=>s.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+
 function init(){
 cfg=JSON.parse(localStorage.getItem("tun_cfg"))||C;
 Object.keys(C).forEach(k=>{if(cfg[k]===undefined)cfg[k]=C[k]});
 L=JSON.parse(localStorage.getItem("tun_links"))||[{name:"Google",url:"https://google.com"},{name:"YouTube",url:"https://youtube.com"}];
 applyUI();loadG();renderL();bindEvents();
-document.addEventListener("visibilitychange",()=>{if(document.hidden&&cfg.clickoff)applyDisguise()});
+document.addEventListener("visibilitychange",()=>{
+if(document.hidden&&cfg.clickoff)applyDisguise(true);
+else if(!document.hidden&&cfg.clickoff)applyDisguise(false);
+});
 }
+
 function applyUI(){
  $("s-cloak").className="t "+(cfg.cloak?"on":"");
  $("s-hide").className="t "+(cfg.hide?"on":"");
@@ -154,28 +173,60 @@ function applyUI(){
  $("s-title").value=cfg.title;
  $("s-disguise").value=cfg.disguise;
  $("s-accent").value=cfg.accent;
-applyTheme();applyDisguise();
+applyTheme();applyDisguise(false);
 }
+
 function save(){
 cfg.title=$("s-title").value;
 cfg.disguise=$("s-disguise").value;
 cfg.accent=$("s-accent").value;
 localStorage.setItem("tun_cfg",JSON.stringify(cfg));
-applyTheme();applyDisguise();
+applyTheme();applyDisguise(false);
 }
+
 function toggle(k){cfg[k]=!cfg[k];save();applyUI();}
+
 function applyTheme(){document.documentElement.style.setProperty("--accent",cfg.accent)}
+
 function resetAccent(){$("s-accent").value="#ffffff";save()}
-function applyDisguise(){
-const m={default:["TUN",""],google:["Google","https://www.google.com/favicon.ico"],classroom:["Home","https://www.gstatic.com/classroom/logo_square_rounded.svg"],drive:["My Drive","https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png"],docs:["Google Docs","https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png"]};
-const d=m[cfg.disguise]||m.default;document.title=d[0];
-let l=document.querySelector("link[rel='icon']");if(!l){l=document.createElement("link");l.rel="icon";document.head.appendChild(l)}l.href=d[1];
+
+// Disguise Logic: true = disguised state, false = normal state
+function applyDisguise(forceDisguise){
+// If forceDisguise is boolean (from clickoff), use it. Else use disguise setting.
+const isDisguised = typeof forceDisguise === 'boolean' ? forceDisguise : (cfg.disguise !== 'default');
+
+const m={
+default:["TUN","data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23000' width='100' height='100'/></svg>"],
+google:["Google","https://www.google.com/favicon.ico"],
+classroom:["Home","https://www.gstatic.com/classroom/logo_square_rounded.svg"],
+drive:["My Drive","https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png"],
+docs:["Google Docs","https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png"]
+};
+
+// If we are disguised, use the selected mask. If not, use default.
+let d;
+if(isDisguised) {
+d = m[cfg.disguise] || m.default;
+// If the selected disguise IS default, but we are forced disguised (clickoff), show Google as fallback
+if(cfg.disguise === 'default') d = m.google; 
+} else {
+d = m.default;
 }
+
+document.title=d[0];
+let l=document.querySelector("link[rel='icon']");
+if(!l){l=document.createElement("link");l.rel="icon";document.head.appendChild(l)}
+l.href=d[1];
+}
+
 function loadG(){
 fetch(B+"game-data.json").then(r=>r.json()).then(d=>{G=d.sort((a,b)=>a.name.localeCompare(b.name));renderG()}).catch(()=>$("grid-games").innerHTML="<div class='card' style='grid-column:1/-1;aspect-ratio:auto'>Error loading games.</div>");
 }
+
 function renderG(){$("grid-games").innerHTML=G.map(g=>`<div class="card" data-n="${g.name.toLowerCase()}" onclick="launch('${g.path}')"><div class="card-t">${g.name}</div></div>`).join("")}
+
 function renderL(){$("grid-links").innerHTML=L.map((l,i)=>`<div class="card" data-n="${l.name.toLowerCase()}"><button class="del" onclick="delL(event,${i})">×</button><div class="card-i">${l.name.charAt(0)}</div><div class="card-t">${l.name}</div><div class="card-s">${new URL(l.url).hostname}</div><div style="position:absolute;inset:0" onclick="openU('${l.url}')"></div></div>`).join("")}
+
 function launch(p){
 const u=B+p+"/index.html";
 fetch(u).then(r=>r.text()).then(h=>{
@@ -185,36 +236,62 @@ const w=window.open("about:blank","_blank");
 if(!w)return alert("Popup blocked!");
 w.document.write(`<html><head><title>${cfg.title}</title></head><body style="margin:0;overflow:hidden;background:#000"><iframe style="border:none;width:100%;height:100vh" srcdoc="${esc(fh)}"></iframe></body></html>`);
 w.document.close();
-if(cfg.hide)applyDisguise();
+if(cfg.hide)applyDisguise(true);
 }else{
  $("ov-f").srcdoc=fh;$("ov").classList.add("on");
 }
 }).catch(e=>alert("Failed to load game."));
 }
+
 function openU(u){
 if(cfg.cloak){
 const w=window.open("about:blank","_blank");
 if(!w)return alert("Popup blocked!");
 w.document.write(`<html><head><title>${cfg.title}</title></head><body style="margin:0;overflow:hidden;background:#fff"><iframe style="border:none;width:100%;height:100vh" src="${u}"></iframe></body></html>`);
 w.document.close();
-if(cfg.hide)applyDisguise();
+if(cfg.hide)applyDisguise(true);
 }else{window.open(u,"_blank");}
 }
+
 function closeOv(){$("ov").classList.remove("on");$("ov-f").srcdoc=""}
+
 function delL(e,i){e.stopPropagation();if(confirm("Delete?")){L.splice(i,1);localStorage.setItem("tun_links",JSON.stringify(L));renderL()}}
+
 function openModal(){$("modal").style.display="flex"}
 function closeModal(){$("modal").style.display="none";$("i-name").value="";$("i-url").value=""}
+
 function saveLink(){
 let n=$("i-name").value.trim(),u=$("i-url").value.trim();
 if(!n||!u)return alert("Fill all fields");
 if(!u.startsWith("http"))u="https://"+u;
 L.push({name:n,url:u});localStorage.setItem("tun_links",JSON.stringify(L));renderL();closeModal();
 }
+
 function exportData(){
-const d="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify({cfg:cfg,links:L}));
-const a=document.createElement("a");a.setAttribute("href",d);a.setAttribute("download","tun_backup.json");a.click();
+const data={cfg:cfg,links:L};
+const blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="tun_backup.json";a.click();
 }
+
+function importData(){$("f-import").click()}
+
+function handleFile(e){
+const file=e.target.files[0];if(!file)return;
+const reader=new FileReader();
+reader.onload=function(ev){
+try{
+const d=JSON.parse(ev.target.result);
+if(d.cfg){cfg=d.cfg;localStorage.setItem("tun_cfg",JSON.stringify(cfg));}
+if(d.links){L=d.links;localStorage.setItem("tun_links",JSON.stringify(L));}
+init();alert("Import successful!");
+}catch(err){alert("Invalid backup file");}
+};
+reader.readAsText(file);
+e.target.value="";
+}
+
 function clearAll(){if(confirm("Reset everything?")){localStorage.removeItem("tun_cfg");localStorage.removeItem("tun_links");location.reload()}}
+
 function bindEvents(){
 document.querySelectorAll("nav button").forEach(b=>b.onclick=function(){
 document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
@@ -223,6 +300,7 @@ this.classList.add("active");$("view-"+this.dataset.view).classList.add("active"
  $("search-games").oninput=e=>{const q=e.target.value.toLowerCase();document.querySelectorAll("#grid-games .card").forEach(c=>c.style.display=c.dataset.n.includes(q)?"":"none")};
  $("search-links").oninput=e=>{const q=e.target.value.toLowerCase();document.querySelectorAll("#grid-links .card").forEach(c=>c.style.display=c.dataset.n.includes(q)?"":"none")};
 }
+
 init();
 </script>
 </body>
