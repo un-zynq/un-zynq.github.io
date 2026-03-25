@@ -1077,35 +1077,45 @@
                 
                 state.lobbyChannel = db.channel('lobby-updates');
                 
-                // Handler voor zowel nieuwe berichten als bewerkingen
+                // Centrale handler voor zowel INSERT als UPDATE
                 const handleChange = async (payload) => {
                     const msg = payload.new;
                     const roomId = msg.room_id;
-                    
-                    // Update lokale cache
-                    await localDB.put('messages', { id: msg.id, room_id: roomId, created_at: msg.created_at, content: msg.content, user_id: msg.user_id, user_name: msg.user_name });
+                    const isInsert = payload.event === 'INSERT'; // We onderscheiden INSERT van UPDATE
 
+                    // 1. Lokaal opslaan
+                    await localDB.put('messages', { 
+                        id: msg.id, 
+                        room_id: roomId, 
+                        created_at: msg.created_at, 
+                        content: msg.content, 
+                        user_id: msg.user_id, 
+                        user_name: msg.user_name 
+                    });
+
+                    // 2. Decrypten
                     let rawText = "New message";
-                    
-                    // Check voor delete
                     if (msg.content === '/') {
                         rawText = "Message deleted";
                     } else {
                         try {
+                            // We gebruiken altijd de worker. De key moet in memory zijn (door loadRooms of openVault)
                             const res = await workerExec('decryptSingle', { content: msg.content, keyId: roomId });
                             if (res.result && res.result.text) rawText = res.result.text;
-                        } catch(e) {}
+                        } catch(e) { 
+                            // Als key niet in memory is, toon "Encrypted"
+                            rawText = "Encrypted"; 
+                        }
                     }
 
-                    // Haal room info op voor is_direct check
+                    // 3. Formatteer Preview
                     const roomData = state.allRooms.find(r => r.id === roomId);
                     const isDirect = roomData ? roomData.is_direct : false;
-                    
-                    // Formatteer
                     const previewText = formatPreview(rawText, msg.user_name, msg.user_id, isDirect, state.user.id);
 
-                    // Update UI
-                    updateLobbyRow(roomId, previewText, msg.created_at);
+                    // 4. Update UI
+                    // we geven 'isInsert' mee om te bepalen of we de tijd/sortering updaten
+                    updateLobbyRow(roomId, previewText, msg.created_at, isInsert);
                 };
 
                 state.lobbyChannel
@@ -1114,20 +1124,26 @@
                 .subscribe();
              };
 
-             const updateLobbyRow = (roomId, text, time) => {
+             const updateLobbyRow = (roomId, text, time, isInsert = true) => {
                  const roomIndex = state.allRooms.findIndex(r => r.id === roomId);
                  if (roomIndex === -1) return;
                  
                  const room = state.allRooms[roomIndex];
+
+                 // Verplaats naar bovenaan
                  state.allRooms.splice(roomIndex, 1);
                  state.allRooms.unshift(room);
 
+                 // Update Preview Altijd
                  room.preview = text; 
-                 // Update tijd alleen als het een insert was (in de listener logica sturen we de msg time mee)
-                 // Maar bij edits willen we de tijd niet resetten als die al oud is. 
-                 // De listener stuurt created_at mee. Dat is prima.
-                 room.last_message_at = time; 
-
+                 
+                 // Update Tijd Alleen als het een nieuw bericht is (sortering)
+                 // De SQL trigger doet dit ook, maar we doen het hier lokaal direct voor snelle UI
+                 if (isInsert) {
+                     room.last_message_at = time;
+                 }
+                 
+                 // Her-render
                  const list = $('room-list');
                  if (list && document.querySelector('.screen.active#scr-lobby')) {
                      window.filterRooms(); 
@@ -1756,15 +1772,14 @@
                     if (!state.user) return; const uid = state.user.id;
                     
                     const processAndRender = async (rooms) => { 
-                        const processed = []; 
-                        
-                        // Laad sleutels
+                        // 1. Laad alle openbare sleutels in de worker
                         const keyPromises = rooms.map(r => {
                             if (!r.has_password && r.salt) return ensureLobbyKey(r.id, r.salt);
                             return Promise.resolve();
                         });
                         await Promise.all(keyPromises);
 
+                        // 2. Verwerk kamers
                         const previewPromises = rooms.map(async (r) => {
                             if (!r || !r.id) return null;
                             const display = await resolveRoomDisplay(r); 
@@ -1773,7 +1788,6 @@
                             
                             if (r.last_message_content) {
                                 let rawText = "New message";
-                                // Check of verwijderd
                                 if (r.last_message_content === '/') {
                                     rawText = "Message deleted";
                                 } else {
@@ -1784,8 +1798,6 @@
                                         }
                                     } catch (e) { rawText = "New message"; }
                                 }
-                                
-                                // Formatteer
                                 previewText = formatPreview(rawText, r.last_message_user_name, r.last_message_user_id, r.is_direct, state.user.id);
                             }
 
@@ -1798,6 +1810,7 @@
                         });
 
                         const results = await Promise.all(previewPromises);
+                        // Sorteer op last_message_at (nieuwste bovenaan)
                         state.allRooms = results.filter(r => r !== null).sort((a, b) => new Date(b.last_message_at || 0) - new Date(a.last_message_at || 0));
                         
                         if(!state.isOfflineMode) setupLobbyListener(state.allRooms.map(r => r.id));
