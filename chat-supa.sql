@@ -6,7 +6,7 @@ CREATE TABLE public.profiles (
     updated_at timestamptz NOT NULL DEFAULT now()
 );
 
--- 2. ROOMS TABEL (Met nieuwe preview kolommen)
+-- 2. ROOMS TABEL (Met lobby preview kolommen)
 CREATE TABLE public.rooms (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name text NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE public.rooms (
     allowed_users text[] NOT NULL DEFAULT '{*}',
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
-    -- NIEUW: Kolommen voor Lobby Preview
+    -- Lobby Preview Kolommen
     last_message_at timestamptz,
     last_message_content text,
     last_message_user_name text,
@@ -140,11 +140,11 @@ RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
     NEW.updated_at = NOW(); RETURN NEW;
 END; $$;
 
--- NIEUW: Lobby Preview Update Function
+-- Lobby Preview Update Function
 CREATE OR REPLACE FUNCTION public.update_room_last_message()
 RETURNS TRIGGER AS $$ BEGIN
   UPDATE public.rooms
-  SET last_message_at = CASE WHEN TG_OP = 'INSERT' THEN NEW.created_at ELSE rooms.last_message_at END,
+  SET last_message_at = NEW.created_at,
       last_message_content = NEW.content,
       last_message_user_name = NEW.user_name,
       last_message_user_id = NEW.user_id
@@ -187,7 +187,7 @@ CREATE TRIGGER on_message_update BEFORE UPDATE ON public.messages FOR EACH ROW E
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created AFTER INSERT OR UPDATE OF raw_user_meta_data ON auth.users FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- NIEUW: Trigger voor lobby updates (Insert en Update)
+-- Trigger voor lobby updates (Insert en Update)
 DROP TRIGGER IF EXISTS on_message_change ON public.messages;
 CREATE TRIGGER on_message_change
 AFTER INSERT OR UPDATE ON public.messages
