@@ -101,8 +101,6 @@
     "ovo-dimensions",
     "ovo",
     "pac-man",
-    "paper-3",
-    "paper-io-2",
     "paper-minecraft",
     "papery-planes",
     "pixel-gun-survival",
@@ -169,7 +167,6 @@
     "vex-6",
     "vex-7",
     "vex-8",
-    "wolfenstein-3d",
     "worlds-hardest-game-2",
     "worlds-hardest-game"
   ],
@@ -224,6 +221,8 @@
     "madalin-stunt-cars-2",
     "monster-truck-destroyer",
     "moving-truck",
+    "paper-io-2",
+    "paper-io-3",
     "parking-fury-2",
     "parking-fury-3",
     "parking-fury",
@@ -246,10 +245,12 @@
     "soccer-random",
     "soccer-skills",
     "super-liquid-soccer",
+    "survival-race",
     "the-heist",
     "volley-random",
     "wheelie-bike-2",
     "wheelie-bike",
+    "wolfenstein-3d",
     "x-trial-racing"
   ],
   "g3": [
