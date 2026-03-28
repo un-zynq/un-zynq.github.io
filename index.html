@@ -10,12 +10,12 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-color: #0a0a0f;       /* Deep dark blue-black */
-      --bg-secondary: #12121a;   /* Card background */
-      --border-color: #1e1e2e;   /* Subtle borders */
-      --text-primary: #e4e4ef;   /* Soft white text */
-      --text-secondary: #6b6b80; /* Muted grey */
-      --accent-primary: #00f0ff; /* Cyber Cyan */
+      --bg-color: #0a0a0f;
+      --bg-secondary: #12121a;
+      --border-color: #1e1e2e;
+      --text-primary: #e4e4ef;
+      --text-secondary: #6b6b80;
+      --accent-primary: #00f0ff;
       --accent-glow: rgba(0, 240, 255, 0.15);
       --radius: 4px;
     }
@@ -32,7 +32,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border-color); }
@@ -47,7 +46,6 @@
       min-height: 100vh;
     }
 
-    /* Header */
     header {
       margin-bottom: 3rem;
       padding-top: 2rem;
@@ -78,7 +76,6 @@
 
     .stats strong { color: var(--accent-primary); font-weight: 400; }
 
-    /* Search */
     .search-container {
       position: relative;
       margin-bottom: 1.5rem;
@@ -128,7 +125,6 @@
       box-shadow: 0 0 10px var(--accent-glow);
     }
 
-    /* Sections */
     .section-label {
       font-size: 0.7rem;
       color: var(--text-secondary);
@@ -143,16 +139,14 @@
       display: none;
     }
 
-    /* Grid */
     .game-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1px; /* Hairline separator */
+      gap: 1px;
       background-color: var(--border-color);
       border: 1px solid var(--border-color);
     }
 
-    /* Card */
     .game-card {
       background: var(--bg-color);
       padding: 1.5rem;
@@ -200,7 +194,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      height: 0; /* Hidden by default */
+      height: 0;
       overflow: hidden;
       opacity: 0;
       transition: all 0.2s ease;
@@ -239,25 +233,24 @@
       border-bottom-color: var(--accent-primary);
     }
 
-    /* Icon Styling */
     .icon {
       width: 14px;
       height: 14px;
       fill: currentColor;
+      vertical-align: middle;
     }
 
-    /* Recent List (Minimal Inline Style) */
+    /* Recent List */
     .recent-list {
       display: flex;
       flex-direction: column;
-      border-left: 1px solid var(--accent-primary); /* Cyan indicator */
+      border-left: 1px solid var(--accent-primary);
       padding-left: 1rem;
       margin-bottom: 1rem;
     }
 
     .recent-item {
       display: flex;
-      justify-content: flex-start; /* Changed from space-between because we removed the path */
       padding: 0.5rem 0;
       font-size: 0.85rem;
       border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -266,7 +259,6 @@
     .recent-item a { color: var(--text-primary); text-decoration: none; }
     .recent-item a:hover { color: var(--accent-primary); }
 
-    /* Toast */
     .toast {
       position: fixed;
       bottom: 2rem;
@@ -289,7 +281,6 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* Responsive */
     @media (max-width: 600px) {
       #app { padding: 1rem; }
       header { margin-bottom: 2rem; padding-top: 1rem; }
@@ -297,7 +288,6 @@
       input#search { font-size: 1.2rem; }
       .game-grid { grid-template-columns: 1fr; border: none; }
       .game-card { border-bottom: 1px solid var(--border-color); }
-      /* Always show actions on mobile */
       .card-actions { height: auto; opacity: 1; margin-top: 1rem; }
     }
   </style>
@@ -324,13 +314,11 @@
   </header>
 
   <main>
-    <!-- Recent -->
     <div id="recent-section">
       <span class="section-label">Recent</span>
       <div class="recent-list" id="recent-container"></div>
     </div>
 
-    <!-- Grid -->
     <span class="section-label">Services</span>
     <div class="game-grid" id="games-container"></div>
   </main>
@@ -339,12 +327,6 @@
 </div>
 
 <script>
-  // --- CONFIGURATION ---
-  // Vul hier je GitHub gebruikersnaam en repository naam in
-  const GITHUB_USER = 'jouw-username'; 
-  const GITHUB_REPO = 'jouw-repo';
-  // ---------------------
-
   const container = document.getElementById('games-container');
   const recentContainer = document.getElementById('recent-container');
   const recentSection = document.getElementById('recent-section');
@@ -356,6 +338,10 @@
 
   let allGameData = {};
   let allGames = [];
+  let ghConfig = { username: null, mainRepo: null };
+
+  // GitHub Icon SVG
+  const ghIcon = `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`;
 
   // Uptime
   let startTime = Date.now();
@@ -364,12 +350,40 @@
     uptimeEl.textContent = s < 60 ? `${s}s` : `${Math.floor(s/60)}m`;
   }, 1000);
 
+  // Haal GitHub username en main repo naam uit de hostname
+  function detectGitHubConfig() {
+    const host = window.location.hostname;
+    // Regex voor username.github.io
+    const match = host.match(/^([^.]+)\.github\.io$/);
+    if (match) {
+      const username = match[1];
+      return {
+        username: username,
+        mainRepo: `${username}.github.io`
+      };
+    }
+    return { username: null, mainRepo: null };
+  }
+
   function formatName(name) {
     return name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
   function getPath(game) {
     return ['g1','g2','g3','g4'].find(g => allGameData[g]?.includes(game)) || 'g1';
+  }
+
+  // Genereer de juiste GitHub URL
+  function getGitHubUrl(repoKey, gameName) {
+    if (!ghConfig.username) return '#';
+    
+    // Logic: "kijk of de gh pages naam ook username.github.io is of iets anders"
+    // Als de repoKey (bijv g1) NIET gelijk is aan de main repo (username.github.io), gebruik dan de repoKey.
+    // Anders gebruik de mainRepo.
+    // Normaal gesproken zijn g1, g2, etc. aparte repo's, dus die worden gebruikt.
+    const repoName = (repoKey !== ghConfig.mainRepo) ? repoKey : ghConfig.mainRepo;
+    
+    return `https://github.com/${ghConfig.username}/${repoName}/tree/main/${gameName}`;
   }
 
   function showToast(msg) {
@@ -399,7 +413,7 @@
     recent.forEach(game => {
       const div = document.createElement('div');
       div.className = 'recent-item';
-      // Hier is de 'link' (het pad) verwijderd zoals gevraagd
+      // Alleen de link naar de game, geen path tekst
       div.innerHTML = `
         <a href="./${getPath(game)}/${game}" target="_blank" onclick="saveRecent('${game}')">${formatName(game)}</a>
       `;
@@ -407,16 +421,12 @@
     });
   }
 
-  // GitHub Icon SVG
-  const ghIcon = `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`;
-
   function createCard(game) {
-    const path = getPath(game);
+    const path = getPath(game); // bijv 'g2'
     const div = document.createElement('div');
     div.className = 'game-card';
     
-    // Genereer GitHub URL
-    const ghUrl = `https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tree/main/${game}`;
+    const ghUrl = getGitHubUrl(path, game);
     
     div.innerHTML = `
       <div class="card-top">
@@ -446,6 +456,8 @@
   }
 
   async function init() {
+    ghConfig = detectGitHubConfig();
+    
     try {
       const res = await fetch('./games.json');
       allGameData = await res.json();
@@ -458,12 +470,10 @@
     }
   }
 
-  // Search
   searchInput.addEventListener('input', (e) => {
     renderGames(allGames.filter(g => g.toLowerCase().includes(e.target.value.toLowerCase().trim())));
   });
 
-  // Random
   randomBtn.addEventListener('click', () => {
     if(!allGames.length) return;
     const game = allGames[Math.floor(Math.random() * allGames.length)];
