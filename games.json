@@ -147,7 +147,6 @@
     "xx142-b2exe"
   ],
   "g2": [
-    "1v1-lol",
     "ages-of-conflict",
     "among-us",
     "baldis-basics",
@@ -363,7 +362,6 @@
     "paper-minecraft",
     "paperio2",
     "papery-planes",
-    "pcraft",
     "pixel-gun-survival",
     "pizza-tower",
     "pokemon-emerald-2",
@@ -379,7 +377,6 @@
     "running-fred",
     "rusher-crusher",
     "santy-is-home",
-    "shuttledeck",
     "skibidi-strike",
     "skiing-fred",
     "skywire",
@@ -395,11 +392,9 @@
     "sm64",
     "smokingbarrels",
     "snake-io-war",
-    "snow-ride",
     "snowbattle",
     "soldier-legend",
     "spacegarden",
-    "stack-bump-3d",
     "stack",
     "station-141",
     "stick-archers",
@@ -450,6 +445,7 @@
     "worm-eat"
   ],
   "g4": [
+    "1v1-lol",
     "1v1-soccer",
     "3d-bowling",
     "8-ball",
