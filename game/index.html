@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Game Loader - Hash Routing zonder groep</title>
+    <title>Game Loader 404 Router</title>
     <style>
         html, body {
             margin: 0;
@@ -43,41 +43,61 @@
             document.getElementById("debug").innerHTML += msg + "<br>";
         };
 
-        async function loadGameFromHash() {
-            const hash = window.location.hash.slice(1).replace(/\/+$/, ""); // alles na #, geen trailing slash
-            debugLog("Huidige hash: " + hash);
+        const path = window.location.pathname;
+        debugLog("Huidige path: " + path);
 
-            if (!hash) {
-                document.getElementById("content").textContent = "Geen game geselecteerd.";
-                return;
-            }
-
-            try {
-                const res = await fetch("/games.json");
-                const data = await res.json();
-
-                let found = false;
-                for (const group in data) {
-                    if (data[group].includes(hash)) {
-                        debugLog(`Game gevonden in ${group}: ${hash}`);
-                        document.body.innerHTML = `<iframe src="/${group}/${hash}"></iframe>`;
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found) {
-                    debugLog("Game niet gevonden!");
-                    document.getElementById("content").textContent = "Game niet gevonden 😢";
-                }
-            } catch (e) {
-                debugLog("Fout bij games.json fetch: " + e);
-                document.getElementById("content").textContent = "Kon games.json niet laden 😢";
-            }
+        function load404() {
+            debugLog("404 geladen");
+            fetch("/404-main.txt")
+                .then(res => res.text())
+                .then(html => {
+                    document.open();
+                    document.write(html);
+                    document.close();
+                })
+                .catch(() => {
+                    document.body.innerHTML = "404 kon niet geladen worden 😢";
+                });
         }
 
-        window.addEventListener("hashchange", loadGameFromHash);
-        window.addEventListener("load", loadGameFromHash);
+        if (path.startsWith("/game/")) {
+            let suffix = path.slice(6).replace(/\/+$/, ""); // na /game/
+            debugLog("Suffix: " + suffix);
+
+            if (!suffix) {
+                debugLog("Leeg suffix → redirect naar /");
+                window.location.href = "/";
+            } else {
+                fetch("/games.json")
+                    .then(res => res.json())
+                    .then(data => {
+                        let found = false;
+                        let groupFound = null;
+                        for (const group in data) {
+                            if (data[group].includes(suffix)) {
+                                found = true;
+                                groupFound = group;
+                                debugLog("Game gevonden: " + suffix + " in groep: " + group);
+                                break;
+                            }
+                        }
+                        if (found) {
+                            // iframe laadt direct de game, zonder gX in URL
+                            document.body.innerHTML = `<iframe src="/${groupFound}/${suffix}"></iframe>`;
+                        } else {
+                            debugLog("Game niet gevonden → 404");
+                            load404();
+                        }
+                    })
+                    .catch(err => {
+                        debugLog("Fout bij fetch games.json: " + err);
+                        load404();
+                    });
+            }
+        } else {
+            debugLog("Path niet /game/... → 404");
+            load404();
+        }
     </script>
 </body>
 </html>
