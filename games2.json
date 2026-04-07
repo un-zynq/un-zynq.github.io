@@ -178,28 +178,36 @@
         "devices":"1,2,3,4"
       },
       "deal-or-no-deal": {
-        "name": "Deal or No Deal"
+        "name": "Deal or No Deal",
+        "devices":"1,2,3,4"
       },
       "deepest-sword": {
-        "name": "Deepest Sword"
+        "name": "Deepest Sword",
+        "devices":"1,2"
       },
       "dino-bros": {
-        "name": "Dino Bros"
+        "name": "Dino Bros",
+        "devices":"1,2,3,4"
       },
       "doctor-acorn-2": {
-        "name": "Doctor Acorn 2"
+        "name": "Doctor Acorn 2",
+        "devices":"1,2,3,4"
       },
       "doge-2048": {
-        "name": "Doge 2048"
+        "name": "Doge 2048",
+        "devices":"1,2,3,4"
       },
       "dummy-never-fails-2": {
-        "name": "Dummy Never Fails 2"
+        "name": "Dummy Never Fails 2",
+        "devices":"1,2,3,4"
       },
       "dummy-never-fails": {
-        "name": "Dummy Never Fails"
+        "name": "Dummy Never Fails",
+        "devices":"1,2,3,4"
       },
       "edge-not-found": {
-        "name": "Edge Not Found"
+        "name": "Edge Not Found",
+        "devices":"1,2"
       },
       "escaping-the-prison": {
         "name": "Escaping the Prison"
