@@ -115,54 +115,67 @@
       },
       "bubble-pop-adventures": {
         "name": "Bubble Pop Adventures",
-        "1,2"
+        "devices": "1,2"
       },
       "burrito-bison-revenge": {
         "name": "Burrito Bison Revenge",
-        "1,2,3,4"
+        "devices": "1,2,3,4"
       },
       "cannon-basketball-4": {
         "name": "Cannon Basketball 4",
-        "1,2,3,4"
+        "devices": "1,2,3,4"
       },
       "canyon-defense": {
-        "name": "Canyon Defense"
+        "name": "Canyon Defense",
+        "devices":"1,2,3,4"
       },
       "cell-machine": {
-        "name": "Cell Machine"
+        "name": "Cell Machine",
+        "devices":"1,2,3,4"
       },
       "checkers-legend": {
-        "name": "Checkers Legend"
+        "name": "Checkers Legend",
+        "devices":"1,2,3,4"
       },
       "circloo-2": {
-        "name": "Circloo 2"
+        "name": "Circloo 2",
+        "devices":"1,2"
       },
       "circloo": {
-        "name": "Circloo"
+        "name": "Circloo",
+        "devices":"1,2"
       },
       "climb-over-it": {
-        "name": "Climb Over It"
+        "name": "Climb Over It",
+        "devices":"1,2,3,4"
       },
       "color-match": {
-        "name": "Color Match"
+        "name": "Color Match",
+        "devices":"1,2,3,4"
       },
       "connect-3": {
-        "name": "Connect 3"
+        "name": "Connect 3",
+        "devices":"1,2,3,4"
       },
       "crossy-road": {
-        "name": "Crossy Road"
+        "name": "Crossy Road",
+        "devices":"1,2"
       },
       "cubes-2048-io": {
-        "name": "Cubes 2048.io"
+        "name": "Cubes 2048.io",
+        "devices":"1,2,3,4"
       },
       "cut-the-rope-holiday-gift": {
-        "name": "Cut the Rope Holiday Gift"
+        "name": "Cut the Rope Holiday Gift",
+        "devices":"1,2,3,4"
       },
       "cut-the-rope-time-travel": {
-        "name": "Cut the Rope Time Travel"
+        "name": "Cut the Rope Time Travel",
+        "devices":"1,2,3,4"
       },
       "cut-the-rope": {
-        "name": "Cut the Rope"
+        "name": "Cut the Rope",
+        "devices":"1,2,3,4"
       },
       "deal-or-no-deal": {
         "name": "Deal or No Deal"
