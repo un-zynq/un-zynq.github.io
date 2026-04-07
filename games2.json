@@ -335,6 +335,9 @@
       "park-out": {
         "name": "Park Out"
       },
+      "penalty-kick-online": {
+        "name": "Penalty Kick Online"
+      },
       "plants-vs-zombies": {
         "name": "Plants vs Zombies"
       },
@@ -1369,9 +1372,6 @@
       },
       "parking-fury": {
         "name": "Parking Fury"
-      },
-      "penalty-kick": {
-        "name": "Penalty Kick"
       },
       "penalty-shooters-2": {
         "name": "Penalty Shooters 2"
