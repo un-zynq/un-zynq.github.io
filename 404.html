@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "e7ca3a68f0c04656baf422e837d316d4"}'></script>
-    <!-- End Cloudflare Web Analytics -->
     
     <link rel="icon" href="/logo.svg">
     <title>UN | ZYNQ</title>
 
-    <!-- HRN Engine laden -->
+    <!-- HRN Engine -->
     <script src="https://cdn.jsdelivr.net/gh/un-zynq/v2/dev/lib7.4.2.js"></script>
 
     <style>
@@ -68,7 +67,7 @@
             height: 100%;
             border: none;
         }
-        /* Modern 404 Styling */
+        /* 404 Styling */
         .error-page {
             display: flex;
             flex-direction: column;
@@ -143,7 +142,6 @@
         async function loadGame() {
             const path = window.location.pathname;
 
-            // Alleen paden zoals /game/alias ondersteunen
             if (!path.startsWith('/game/')) {
                 show404();
                 return;
@@ -158,10 +156,10 @@
             }
 
             try {
-                // Initialiseer HRN Engine
+                // HRN Engine initialiseren
                 await window.HRN.load();
 
-                // Haal game object op via alias
+                // Game ophalen via alias
                 const game = window.HRN.get(alias);
 
                 if (!game || !game.url) {
@@ -169,30 +167,30 @@
                     return;
                 }
 
-                // Maak iframe aan met de juiste game URL
+                // Belangrijke wijziging: src begint met / (absolute path)
                 const iframe = document.createElement('iframe');
-                iframe.src = game.url;
-                iframe.allow = "fullscreen; accelerometer; gyroscope; magnetometer; autoplay";
+                iframe.src = game.url.startsWith('/') ? game.url : '/' + game.url;
+                iframe.allow = "fullscreen; accelerometer; gyroscope; magnetometer; autoplay; encrypted-media";
 
                 iframe.onload = () => {
                     reveal();
                 };
 
-                // Fallback als iframe te lang doet over laden
+                // Fallback als laden te lang duurt
                 setTimeout(reveal, 6500);
 
                 content.appendChild(iframe);
 
-                // Update title met gamenaam
+                // Update paginatitel
                 document.title = `${game.name} - ZYNQ`;
 
             } catch (err) {
-                console.error("Error loading game with HRN:", err);
+                console.error("Error loading game:", err);
                 show404();
             }
         }
 
-        // Start de game loader
+        // Start
         loadGame();
     </script>
 </body>
