@@ -226,6 +226,7 @@
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       height: 100%;
+      cursor: pointer;
     }
 
     .game-card:hover {
@@ -394,7 +395,7 @@
   let allGames = [];
   let startTime = Date.now();
 
-  // Uptime
+  // Uptime counter
   setInterval(() => {
     const s = Math.floor((Date.now() - startTime) / 1000);
     uptimeEl.textContent = s < 60 ? `${s}s` : `${Math.floor(s/60)}m`;
@@ -408,8 +409,10 @@
 
   function createGameCard(game) {
     const card = document.createElement('a');
-    card.href = game.url;
     card.className = 'game-card';
+    // Belangrijke verandering: link naar /game/alias
+    card.href = `./game/${game.alias}`;
+    
     card.innerHTML = `
       <div class="splash-container">
         <img src="${game.splash}" alt="${game.name}" class="splash" loading="lazy">
@@ -450,7 +453,7 @@
       renderFeatured(allGames);
       renderAllGames();
 
-      // Search
+      // Search functionaliteit
       searchInput.addEventListener('input', () => {
         const query = searchInput.value.trim();
         if (!query) {
@@ -461,13 +464,13 @@
         renderAllGames(results);
       });
 
-      // Random button
+      // Random button → ook naar /game/alias
       randomBtn.addEventListener('click', () => {
         const randomGame = window.HRN.random();
         if (randomGame) {
           showToast(`Opening ${randomGame.name}...`);
           setTimeout(() => {
-            window.location.href = randomGame.url;
+            window.location.href = `./game/${randomGame.alias}`;
           }, 280);
         }
       });
