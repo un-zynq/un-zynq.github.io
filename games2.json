@@ -210,37 +210,48 @@
         "devices":"1,2"
       },
       "escaping-the-prison": {
-        "name": "Escaping the Prison"
+        "name": "Escaping the Prison",
+        "devices":"1,2,3,4"
       },
       "evolution": {
-        "name": "Evolution"
+        "name": "Evolution",
+        "devices":"1,2,3,4"
       },
       "exo": {
-        "name": "Exo"
+        "name": "Exo",
+        "devices":"1,2"
       },
       "factory-balls": {
-        "name": "Factory Balls"
+        "name": "Factory Balls",
+        "devices":"1,2,3,4"
       },
       "farm-match": {
-        "name": "Farm Match"
+        "name": "Farm Match",
+        "devices":"1,2,3,4"
       },
       "flash-tetris": {
-        "name": "Flash Tetris"
+        "name": "Flash Tetris",
+        "devices":"1,2"
       },
       "fleeing-the-complex": {
-        "name": "Fleeing the Complex"
+        "name": "Fleeing the Complex",
+        "devices":"1,2,3,4"
       },
       "game-inside-a-game": {
-        "name": "Game Inside a Game Inside ..."
+        "name": "Game Inside a Game Inside ...",
+        "devices":"1,2,3,4"
       },
       "george-and-the-printer": {
-        "name": "George and the Printer"
+        "name": "George and the Printer",
+        "devices":"1,2,3,4"
       },
       "getting-over-it": {
-        "name": "Getting Over It"
+        "name": "Getting Over It",
+        "devices":"1,2,3,4"
       },
       "go-ball": {
-        "name": "Go Ball"
+        "name": "Go Ball",
+        "devices":"1,2,3,4"
       },
       "go-tet": {
         "name": "Go Tet"
