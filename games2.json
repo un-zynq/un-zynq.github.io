@@ -254,28 +254,36 @@
         "devices":"1,2,3,4"
       },
       "go-tet": {
-        "name": "Go Tet"
+        "name": "Go Tet",
+        "devices":"1,2,3,4"
       },
       "google-feud": {
-        "name": "Google Feud"
+        "name": "Google Feud",
+        "devices":"1,2,3,4"
       },
       "gravity-soccer": {
-        "name": "Gravity Soccer"
+        "name": "Gravity Soccer",
+        "devices":"1,2,3,4"
       },
       "grey-box-testing": {
-        "name": "Grey-Box Testing"
+        "name": "Grey-Box Testing",
+        "devices":"1,2"
       },
       "handshakes": {
-        "name": "Handshakes"
+        "name": "Handshakes",
+        "devices":"1,2"
       },
       "hanger": {
-        "name": "Hanger"
+        "name": "Hanger",
+        "devices":"1,2,3,4"
       },
       "hex-empire": {
-        "name": "Hex Empire"
+        "name": "Hex Empire",
+        "devices":"1,2,3,4"
       },
       "hextris": {
-        "name": "Hextris"
+        "name": "Hextris",
+        "devices":"1,2"
       },
       "icy-purple-head-2": {
         "name": "Icy Purple Head 2"
