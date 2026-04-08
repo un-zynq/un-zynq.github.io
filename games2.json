@@ -1711,31 +1711,31 @@
       },
       "drift-boss": {
         "name": "Drift Boss",
-        "category": "racing"
+        "category": "driving"
       },
       "drift-dudes": {
         "name": "Drift Dudes",
-        "category": "racing"
+        "category": "driving"
       },
       "drift-hunters-2": {
         "name": "Drift Hunters 2",
-        "category": "racing"
+        "category": "driving"
       },
       "drift-hunters-pro": {
         "name": "Drift Hunters Pro",
-        "category": "racing"
+        "category": "driving"
       },
       "drift-hunters": {
         "name": "Drift Hunters",
-        "category": "racing"
+        "category": "driving"
       },
       "drive-mad": {
         "name": "Drive Mad",
-        "category": "racing"
+        "category": "driving"
       },
       "earn-to-die": {
         "name": "Earn to Die",
-        "category": "racing"
+        "category": "driving"
       },
       "edge-surf": {
         "name": "Edge Surf",
@@ -1787,7 +1787,7 @@
       },
       "indian-truck-simulator": {
         "name": "Indian Truck Simulator",
-        "category": "racing"
+        "category": "driving"
       },
       "infinite-craft": {
         "name": "Infinite Craft",
@@ -1799,15 +1799,15 @@
       },
       "madalin-stunt-cars-3": {
         "name": "Madalin Stunt Cars 3",
-        "category": "racing"
+        "category": "driving"
       },
       "monster-truck-destroyer": {
         "name": "Monster Truck Destroyer",
-        "category": "racing"
+        "category": "driving"
       },
       "monster-truck-vs-zombie": {
         "name": "Monster Truck vs Zombie",
-        "category": "racing"
+        "category": "driving"
       },
       "moto-trial-racing-2": {
         "name": "Moto Trial Racing 2",
@@ -1827,15 +1827,15 @@
       },
       "parking-fury-2": {
         "name": "Parking Fury 2",
-        "category": "racing"
+        "category": "driving"
       },
       "parking-fury-3": {
         "name": "Parking Fury 3",
-        "category": "racing"
+        "category": "driving"
       },
       "parking-fury": {
         "name": "Parking Fury",
-        "category": "racing"
+        "category": "driving"
       },
       "penalty-shooters-2": {
         "name": "Penalty Shooters 2",
@@ -1851,7 +1851,7 @@
       },
       "stock-car-hero": {
         "name": "Stock Car Hero",
-        "category": "racing"
+        "category": "driving"
       },
       "storm-city-mafia": {
         "name": "Storm City Mafia",
@@ -1867,7 +1867,7 @@
       },
       "ultimate-offroad": {
         "name": "Ultimate Offroad",
-        "category": "racing"
+        "category": "driving"
       },
       "volley-random": {
         "name": "Volley Random",
@@ -2087,15 +2087,15 @@
       },
       "racing-monster-trucks": {
         "name": "Racing Monster Trucks",
-        "category": "racing"
+        "category": "driving"
       },
       "real-flying-truck": {
         "name": "Real Flying Truck",
-        "category": "racing"
+        "category": "driving"
       },
       "real-garbage-truck": {
         "name": "Real Garbage Truck",
-        "category": "racing"
+        "category": "driving"
       },
       "retro-bowl": {
         "name": "Retro Bowl",
