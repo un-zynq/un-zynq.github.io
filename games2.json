@@ -286,31 +286,40 @@
         "devices":"1,2"
       },
       "icy-purple-head-2": {
-        "name": "Icy Purple Head 2"
+        "name": "Icy Purple Head 2",
+        "devices":"1,2,3,4"
       },
       "icy-purple-head-3": {
-        "name": "Icy Purple Head 3"
+        "name": "Icy Purple Head 3",
+        "devices":"1,2,3,4"
       },
       "the-impossible-quiz": {
-        "name": "The Impossible Quiz"
+        "name": "The Impossible Quiz",
+        "devices":"1,2,3,4"
       },
       "infiltrating-the-airship": {
-        "name": "Infiltrating the Airship"
+        "name": "Infiltrating the Airship",
+        "devices":"1,2,3,4"
       },
       "jewels-blitz-5": {
-        "name": "Jewels Blitz 5"
+        "name": "Jewels Blitz 5",
+        "devices":"1,2,3,4"
       },
       "jungle-td": {
-        "name": "Jungle TD"
+        "name": "Jungle TD",
+        "devices":"1,2,3,4"
       },
       "kingdom-defense-mercenary": {
-        "name": "Kingdom Defense: Mercenary"
+        "name": "Kingdom Defense: Mercenary",
+        "devices":"1,2,3,4"
       },
       "kingdom-guards-tower-defense": {
-        "name": "Kingdom Guards: Tower Defense"
+        "name": "Kingdom Guards: Tower Defense",
+        "devices":"1,2,3,4"
       },
       "kingdom-rush": {
-        "name": "Kingdom Rush"
+        "name": "Kingdom Rush",
+        "devices":"1,2,3,4"
       },
       "marble-dash": {
         "name": "Marble Dash"
