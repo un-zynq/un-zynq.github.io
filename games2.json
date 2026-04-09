@@ -787,7 +787,7 @@
       },
       "flying-cars-era": {
         "name": "Flying Cars Era",
-        "category": "casual"
+        "category": "driving"
       },
       "fruit-ninja": {
         "name": "Fruit Ninja",
@@ -1703,7 +1703,7 @@
       },
       "crazy-cars": {
         "name": "Crazy Cars",
-        "category": "casual"
+        "category": "driving"
       },
       "death-car": {
         "name": "Death Car",
@@ -1739,7 +1739,7 @@
       },
       "earn-to-die": {
         "name": "Earn to Die",
-        "category": "driving"
+        "category": "survival"
       },
       "edge-surf": {
         "name": "Edge Surf",
@@ -1951,7 +1951,7 @@
       },
       "cars-simulator": {
         "name": "Cars Simulator",
-        "category": "casual"
+        "category": "driving"
       },
       "cartoon-mini-racing": {
         "name": "Cartoon Mini Racing",
