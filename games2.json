@@ -1995,22 +1995,32 @@
       },
       "fnaf": {
         "name": "FNAF",
+        "devices":"1,2",
         "category": "horror"
       },
       "fnaf-2": {
         "name": "FNAF 2",
+        "devices":"1,2",
         "category": "horror"
       },
       "fnaf-3": {
         "name": "FNAF 3",
+        "devices":"1,2",
         "category": "horror"
       },
       "fnaf-4": {
         "name": "FNAF 4",
+        "devices":"1,2",
+        "category": "horror"
+      },
+      "fnaf-5": {
+        "name": "FNAF 5",
+        "devices":"1,2",
         "category": "horror"
       },
       "fnaf-sister-location": {
         "name": "FNAF: Sister Location",
+        "devices":"1,2",
         "category": "horror"
       },
       "granny-2-asylum-horror-house": {
