@@ -5,15 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="./logo.svg">
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e7ca3a68f0c04656baf422e837d316d4"}'></script>
-
   <title>ZYNQ | Games</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
   <script src="https://cdn.jsdelivr.net/gh/un-zynq/zynq-lib@1.1.4/index.min.js"></script>
-
   <style>
     :root {
       --bg: #08090d;
@@ -131,6 +127,21 @@
       font-weight: 600;
     }
 
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin: 24px 0 16px;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border-subtle);
+      margin: 48px 0;
+    }
+
     .games-grid, .featured-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -177,33 +188,36 @@
       padding: 80px;
       color: var(--text-dim);
     }
+
+    @media (max-width: 1100px) { .games-grid, .featured-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 768px) { .games-grid, .featured-grid { grid-template-columns: repeat(2, 1fr); } }
   </style>
 </head>
-
 <body>
 <div id="app">
-
   <header>
     <div class="header-top">
       <div class="logo">
         <div class="logo-mark">Z</div>
         <div class="logo-text">ZYNQ <span>Games</span></div>
       </div>
-
       <div style="color: var(--text-muted)">
         <strong id="count-text">0</strong> games
       </div>
     </div>
-
     <div class="search-section">
       <input type="text" class="search-input" id="search" placeholder="Search games...">
-      <button class="btn-random" id="random-btn">🎲 I'm bored</button>
+      <button class="btn-random" id="random-btn">I'm bored</button>
     </div>
   </header>
 
+  <div class="section-title">Featured Highlights</div>
   <div class="featured-grid" id="featured-container"></div>
-  <div class="games-grid" id="games-container"></div>
 
+  <hr>
+
+  <div class="section-title">All Games</div>
+  <div class="games-grid" id="games-container"></div>
 </div>
 
 <script>
@@ -222,7 +236,7 @@
 
     a.innerHTML = `
       <div class="splash-container">
-        <img src="${game.thumb || game.splash}" class="splash">
+        <img src="${game.thumb || game.splash}" class="splash" loading="lazy">
       </div>
       <div class="game-info">
         <div class="game-title">${game.name}</div>
@@ -250,37 +264,32 @@
   async function init() {
     await ZYNQ.games.init();
 
-    // ✅ FIX: juiste source volgens docs
     allGames = ZYNQ.games.list || ZYNQ.games.all;
 
     countEl.textContent = allGames.length;
 
     renderFeatured(allGames);
+    
     render(allGames);
 
-    // 🔥 FIX SEARCH (dit was je bug)
     searchInput.addEventListener('input', () => {
       const q = searchInput.value.trim();
 
-      if (!q) return render(allGames);
+      if (!q) {
+        return render(allGames);
+      }
 
       ZYNQ.games.search(q);
-
-      // filtered state is correct resultaat
       render(ZYNQ.games.filtered || []);
     });
 
-    // 🎲 random fix
     randomBtn.addEventListener('click', () => {
       const g = ZYNQ.games.getRandomOne?.();
-      if (!g) return;
-
-      window.location.href = `./game/${g.alias}`;
+      if (g) window.location.href = `./game/${g.alias}`;
     });
   }
 
   init();
 </script>
-
 </body>
 </html>
