@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/gh/un-zynq/zynq-lib@1.1.4/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/un-zynq/zynq-lib@1.1.5/index.min.js"></script>
   <style>
     :root {
       --bg: #08090d;
@@ -262,7 +262,7 @@
   }
 
   async function init() {
-    await ZYNQ.games.init();
+    await ZYNQ.games.init({version:"888ee07fb7e0ae9dd8a5faedc01e2847879af1e5"});
 
     allGames = ZYNQ.games.list || ZYNQ.games.all;
 
